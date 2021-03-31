@@ -1,6 +1,47 @@
 # AE740_FINAL_PROJECT
 Final Project
 
+## Installation
+
+Tested on Ubuntu 18.04, using Ros Melodic.
+
+Create a workspace:
+```
+~/$ cd
+~/$ mkdir -p catkin_ws/src
+```
+Now clone the entire repo into the src folder:
+```
+~/$ cd catkin_ws/src/
+~/catkin_ws/src$ git clone <repo url>
+```
+This should contain a copy of all the dependencies we need, so hopefully we dont need to run extra installation processes. 
+
+From the workspace folder, we just need to build the folder:
+```
+~/catkin_ws$ catkin build -j8
+```
+
+and now hopefully all the dependencies can be built.
+
+
+
+
+## Testing rotorS
+
+using the basic 
+
+```
+roslaunch rotors_gazebo mav_hovering_example.launch mav_name:=firefly world_name:=basic
+```
+
+If you have issues with VMware, when launching gazebo:
+```
+export SVGA_VGPU10=0
+```
+might help
+
+
 
 ## Testing Trajectory Generation
 In separate terminal windows
@@ -37,3 +78,5 @@ rviz
 ```
 
 and then add the topic `/desired_trajectory_waypoints`
+
+the generated trajectory can also be seen 
