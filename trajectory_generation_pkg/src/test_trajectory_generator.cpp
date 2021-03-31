@@ -3,6 +3,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseArray.h>
 #include <tf/transform_broadcaster.h>
+#include <cmath>
 
 // This code generates a poseArray and publishes it once
 // it is published as soon as a node subscribes to /desired_trajectory_wapoints topic
@@ -34,8 +35,11 @@ int main(int argc, char** argv){
   for (int i=0; i<14; i++){
     geometry_msgs::Pose pose;
     pose.position.x = i;
+    pose.position.z = std::sin(M_PI*((1.0*i)/13.0));
     poseArray.poses.push_back(pose);
   }
+
+  ROS_INFO("Waiting for subscriber to waypoints...");
 
   while (posePublisher.getNumSubscribers() == 0){
     ros::spinOnce();
@@ -44,6 +48,8 @@ int main(int argc, char** argv){
   poseArray.header.frame_id = "/world";
 
   ROS_INFO("Publishing Desired Waypoints");
+  posePublisher.publish(poseArray);
+  posePublisher.publish(poseArray);
   posePublisher.publish(poseArray);
 
   return 0;

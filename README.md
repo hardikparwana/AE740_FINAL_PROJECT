@@ -26,3 +26,14 @@ Received poseArray
 Received 17 desired Waypoints - generating trajectory
 [ INFO] [1617205727.083034159]: Generated optimized trajectory from 18 waypoints
 ```
+
+To see the pose array, we additionally need to run
+```
+rosrun tf static_transrm_publisher 0 0 0 0 0 0 1 map /world 10
+```
+and then
+```
+rviz
+```
+
+and then add the topic `/desired_trajectory_waypoints`

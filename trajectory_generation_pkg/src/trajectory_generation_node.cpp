@@ -24,6 +24,8 @@ class WaypointFollower{
     ros::Time trajectoryStartTime;
     mav_trajectory_generation::Trajectory trajectory;
 
+    ros::Publisher trajectoryPub;
+
     //Current State
     Eigen::Vector3d x;
 
@@ -107,11 +109,12 @@ class WaypointFollower{
 
         visualization_msgs::MarkerArray markers;
         double distance = 0.2; // Distance by which to seperate additional markers. Set 0.0 to disable.
-        std::string frame_id = "world";
+        std::string frame_id = "/world";
 
         // From Trajectory class:
         mav_trajectory_generation::drawMavTrajectory(trajectory, distance, frame_id, &markers);
 
+        trajectoryPub.publish(markers);
 
     }
 
@@ -124,6 +127,8 @@ class WaypointFollower{
             desiredWaypointsSub = nh.subscribe(
                 "/desired_trajectory_waypoints", 10, &WaypointFollower::generateTrajectory, this);
             
+
+            trajectoryPub = nh.advertise<visualization_msgs::MarkerArray>("/trajectory",20);
 
         }
 
