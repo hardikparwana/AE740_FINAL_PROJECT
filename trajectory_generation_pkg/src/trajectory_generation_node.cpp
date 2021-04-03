@@ -5,11 +5,15 @@
 
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseArray.h>
+#include <trajectory_msgs/MultiDOFJointTrajectory.h>
 
 #include <mav_trajectory_generation/polynomial_optimization_linear.h>
 #include <mav_trajectory_generation/trajectory.h>
 
 #include <mav_trajectory_generation_ros/ros_visualization.h>
+#include <mav_trajectory_generation/trajectory_sampling.h>
+
+#include <mav_msgs/conversions.h>
 
 #include <ros/console.h>
 
@@ -24,6 +28,8 @@ class WaypointFollower{
     ros::Time trajectoryStartTime;
     mav_trajectory_generation::Trajectory trajectory;
 
+    ros::Publisher trajectoryPubMarkers;
+
     ros::Publisher trajectoryPub;
 
     //Current State
@@ -33,6 +39,7 @@ class WaypointFollower{
 
     void onCurrentState(geometry_msgs::Pose const & cur_state){
         std::cout << "Received current state is: " << cur_state << std::endl;
+        
     }
 
     void generateTrajectory(geometry_msgs::PoseArray const & poseArray){
@@ -107,6 +114,21 @@ class WaypointFollower{
 
         ROS_INFO("Generated optimized trajectory from %d waypoints", vertices.size());
 
+        // send trajectory to rotorsSimulator
+
+        // sample the trajectory:
+        mav_msgs::EigenTrajectoryPoint::Vector trajectoryStates;
+        double sampling_interval = 0.1;
+        bool success = mav_trajectory_generation::sampleWholeTrajectory(trajectory, sampling_interval, &trajectoryStates);
+
+        // convert to MultiDOFJointTrajectory Msg
+        trajectory_msgs::MultiDOFJointTrajectory trajectoryMsg;
+        mav_msgs::msgMultiDofJointTrajectoryFromEigen (trajectoryStates, &trajectoryMsg);
+
+        // publish to /firelfy/command/trajectory
+        trajectoryPub.publish(trajectoryMsg);
+
+        // ** VIZ [start] **
         visualization_msgs::MarkerArray markers;
         double distance = 0.2; // Distance by which to seperate additional markers. Set 0.0 to disable.
         std::string frame_id = "/world";
@@ -114,7 +136,9 @@ class WaypointFollower{
         // From Trajectory class:
         mav_trajectory_generation::drawMavTrajectory(trajectory, distance, frame_id, &markers);
 
-        trajectoryPub.publish(markers);
+        trajectoryPubMarkers.publish(markers);
+
+        // ** VIZ [end] **
 
     }
 
@@ -128,7 +152,9 @@ class WaypointFollower{
                 "/desired_trajectory_waypoints", 10, &WaypointFollower::generateTrajectory, this);
             
 
-            trajectoryPub = nh.advertise<visualization_msgs::MarkerArray>("/trajectory",20);
+            trajectoryPubMarkers = nh.advertise<visualization_msgs::MarkerArray>("/trajectory",20);
+
+            trajectoryPub = nh.advertise<trajectory_msgs::MultiDOFJointTrajectory>("/firefly/command/trajectory",20);
 
         }
 
