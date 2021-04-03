@@ -25,8 +25,11 @@ int main(int argc, char** argv){
   geometry_msgs::Pose end;
 
   start.position.x = 0.0;
+  start.position.z = 2.0;
   mid.position.x = -1;
+  mid.position.z = 2.0;
   end.position.x = -2;
+  end.position.z = 2.0;
 
   poseArray.poses.push_back(start);
   poseArray.poses.push_back(mid);
@@ -35,7 +38,7 @@ int main(int argc, char** argv){
   for (int i=0; i<14; i++){
     geometry_msgs::Pose pose;
     pose.position.x = i;
-    pose.position.z = std::sin(M_PI*((1.0*i)/13.0));
+    pose.position.z = 2.0 + std::sin(M_PI*((1.0*i)/13.0));
     poseArray.poses.push_back(pose);
   }
 

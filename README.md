@@ -79,4 +79,23 @@ rviz
 
 and then add the topic `/desired_trajectory_waypoints`
 
-the generated trajectory can also be seen 
+
+
+## Testing the combined cart + drone
+In separate terminals:
+
+Start the drone:
+```
+roslaunch rotors_gazebo mav_hovering_example.launch mav_name:=firefly world_name:=basic
+```
+
+Spawn the cart:
+```
+roslaunch vehicle_description spawn_cart_holonomic.launch 
+```
+in this terminal pressing 1 + enter makes the cart move forward
+
+Launch the trajectory generation node:
+```
+rosrun trajectory_generation trajectory_generation_node 
+```
