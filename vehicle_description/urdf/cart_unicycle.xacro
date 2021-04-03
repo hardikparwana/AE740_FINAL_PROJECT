@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+
+<robot name="castor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+  <xacro:include filename="$(find vehicle_description)/urdf/cart_unicycle_files/cart_unicycle_materials.xacro" />
+  <xacro:include filename="$(find vehicle_description)/urdf/cart_unicycle_files/cart_unicycle.gazebo" />
+  <xacro:include filename="$(find vehicle_description)/urdf/cart_unicycle_files/cart_unicycle_macros.xacro" />
+    
+  <link name="link_chassis">
+    <!-- pose and inertial -->
+    <pose>0 0 0.1 0 0 0</pose>
+    <inertial>
+      <mass value="5"/>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <inertia ixx="0.0395416666667" ixy="0" ixz="0" iyy="0.106208333333" iyz="0" izz="0.106208333333"/>
+    </inertial>
+    <!-- body -->
+    <collision name="collision_chassis">
+      <geometry>
+        <box size="0.5 0.3 0.07"/>  <!--0.07 height wheel diameter: 0.2 -->
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.5 0.3 0.07"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+
+    <!-- invisible caster front to support weight-->
+    <collision name="caster_front_collision">
+      <origin rpy=" 0 0 0" xyz="0.35 0 -0.05"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+
+    <!-- front wheels only for visual -->
+    <visual name="left_front_wheel">
+      <origin rpy="0 1.5707 1.5707" xyz="0.2 -0.2 0"/>
+      <geometry>
+            <cylinder length="0.04" radius="0.1"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <visual name="right_front_wheel">
+      <origin rpy="0 1.5707 1.5707" xyz="0.2 0.2 0"/>
+      <geometry>
+            <cylinder length="0.04" radius="0.1"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+
+    <!-- rear wheels only for visual -->
+    <visual name="left_rear_wheel">
+      <origin rpy="0 1.5707 1.5707" xyz="-0.2 -0.2 0"/>
+      <geometry>
+            <cylinder length="0.04" radius="0.1"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <visual name="right_rear_wheel">
+      <origin rpy="0 1.5707 1.5707" xyz="-0.2 0.2 0"/>
+      <geometry>
+            <cylinder length="0.04" radius="0.1"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+
+
+  </link>
+
+  <!-- invivible left and wheels at center for usign differential drive plugin that is meant for two wheels only-->
+  <xacro:link_wheel name="link_right_rear_wheel" />
+  <xacro:joint_wheel name="joint_right_rear_wheel" child="link_right_rear_wheel" origin_xyz="-0.05 0.20 0" damping="1.0" friction="1.0"/>
+
+  <xacro:link_wheel name="link_left_rear_wheel" />
+  <xacro:joint_wheel name="joint_left_rear_wheel" child="link_left_rear_wheel" origin_xyz="-0.05 -0.20 0" damping="1.0" friction="1.0"/>
+
+  <!--xacro:link_wheel name="link_right_front_wheel" />
+  <xacro:joint_wheel name="joint_right_front_wheel" child="link_right_front_wheel" origin_xyz="0.2 0.20 0" damping="0.0" friction="2.0"/>
+
+  <xacro:link_wheel name="link_left_front_wheel" />
+  <xacro:joint_wheel name="joint_left_front_wheel" child="link_left_front_wheel" origin_xyz="0.2 -0.20 0" damping="0.0" friction="2.0"/-->
+
+</robot>
+  
+
+
+
+

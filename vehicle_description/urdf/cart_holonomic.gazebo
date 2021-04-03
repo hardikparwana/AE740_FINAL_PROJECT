@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+
+<robot>
+
+  <!-- Colours used by gazebo  -->
+  <gazebo reference="base_footprint">
+    <material>Gazebo/Brown</material>
+  </gazebo>
+  <gazebo reference="link_chassis">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="link_left_rear_wheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  <gazebo reference="link_right_rear_wheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  <!--gazebo reference="link_left_front_wheel">
+  <material>Gazebo/White</material>
+  </gazebo>
+  <gazebo reference="link_right_front_wheel">
+    <material>Gazebo/White</material>
+  </gazebo-->
+ 
+
+  <gazebo>
+    <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>cmd_holonomic</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometryRate>20.0</odometryRate>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+
+
+</robot>

@@ -3,9 +3,9 @@
 <robot name="castor" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 
-  <xacro:include filename="$(find vehicle_description)/urdf/castor_materials.xacro" />
-  <xacro:include filename="$(find vehicle_description)/urdf/castor.gazebo" />
-  <xacro:include filename="$(find vehicle_description)/urdf/castor_macros.xacro" />
+  <xacro:include filename="$(find vehicle_description)/urdf/castor_files/castor_materials.xacro" />
+  <xacro:include filename="$(find vehicle_description)/urdf/castor_files/castor.gazebo" />
+  <xacro:include filename="$(find vehicle_description)/urdf/castor_files/castor_macros.xacro" />
     
   <link name="link_chassis">
     <!-- pose and inertial -->
