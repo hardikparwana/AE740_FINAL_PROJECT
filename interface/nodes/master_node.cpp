@@ -23,7 +23,7 @@ class StateMachine{
         current_state << cur_state.position.x , cur_state.position.y , cur_state.position.z;
         cartUpdated = true;
     }
-
+             
     void cartPoseCallback(gazebo_msgs::ModelStates modelState){
         int cartIndex = resolveGazeboIndex(modelState,std::string("cart"));
         geometry_msgs::Pose cartPose = modelState.pose[cartIndex];
@@ -40,9 +40,11 @@ class StateMachine{
 			case exploration_status_t::STATE_INITIALIZING:
     			nextState = executeInitializing();
 
+            // if far away from goal, then do RRT
     		case exploration_status_t::STATE_REMOTE:
     			nextState = executeRRT();
 
+            // if near (within a cone of) the goal, then shift to pure control
     		case exploration_status_t::STATE_PROXIMITY_CONTROL:
     			nextState = executeLandingControl();
 		}
@@ -57,6 +59,8 @@ class StateMachine{
         if (!cartUpdated)
          return exploration_status_t::STATE_INITIALIZING;
 
+
+        // tells if it is within a cone of goal location
         bool proximity = checkDistanceToGoal(current_state, cart_state);
         if (proximity)
             return exploration_status_t::STATE_PROXIMITY_CONTROL;

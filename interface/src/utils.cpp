@@ -5,6 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+// returns the index at which a gazebo object named "name" is located in the gazebo pose message
 int resolveGazeboIndex( gazebo_msgs::ModelStates modelState, std::string name  )
 {
 	int index;
@@ -21,6 +22,7 @@ int resolveGazeboIndex( gazebo_msgs::ModelStates modelState, std::string name  )
     return index;
 }
 
+// returns true if within a cone of goal, false otherwise
 bool checkDistanceToGoal(Eigen::Vector3d robot, Eigen::Vector3d van)
 {
 	// Cone angle = 60 degrees
@@ -46,6 +48,7 @@ bool checkDistanceToGoal(Eigen::Vector3d robot, Eigen::Vector3d van)
 
 }
 
+// returns distance between 2 points in R^3
 float distancePoints(Eigen::Vector3d p1, Eigen::Vector3d p2)
 {
 	return (p1-p2).norm();
