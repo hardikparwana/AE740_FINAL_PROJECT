@@ -99,3 +99,9 @@ Launch the trajectory generation node:
 ```
 rosrun trajectory_generation trajectory_generation_node 
 ```
+
+
+## Testing the landing sequence
+```
+roslaunch interface landing_test.launch
+```

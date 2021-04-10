@@ -26,7 +26,7 @@ int resolveGazeboIndex( gazebo_msgs::ModelStates modelState, std::string name  )
 bool checkDistanceToGoal(Eigen::Vector3d robot, Eigen::Vector3d van)
 {
 	// Cone angle = 60 degrees
-	float cone_angle = 60*M_PI/180.0f;
+	float cos_cone_angle = 0.5; //std::cos(60*M_PI/180.0f);
 
 	// max distance
 	float dist_thresold = 5.0f;
@@ -39,12 +39,16 @@ bool checkDistanceToGoal(Eigen::Vector3d robot, Eigen::Vector3d van)
 	Eigen::Vector3d e3(0,0,1);
 	Eigen::Vector3d line = robot - van;
 
-	float angle = line.dot(e3);
+	// std::cout << "ROBOT: " << robot << " VAN: " << van << " Line: " << line << std::endl;
 
-	if (angle<cone_angle)
-		return false;
+	float cos_angle = line.dot(e3)/(line.norm());
 
-	return true;
+	// std::cout << "Cos Angle: " << cos_angle << " -- Cos 60: " <<  cos_cone_angle <<  " RETURNING: " <<  (cos_angle  > cos_cone_angle)<< std::endl; 
+
+	if (cos_angle  > cos_cone_angle)
+		return true;
+
+	return false;
 
 }
 
