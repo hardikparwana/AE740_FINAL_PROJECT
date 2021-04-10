@@ -82,7 +82,7 @@ class StateMachine{
 
     int8_t executeInitializing()
     {
-        ROS_INFO(" *** EXECUTING INIT *** ");
+        // ROS_INFO(" *** EXECUTING INIT *** ");
         //wait for all messages to start coming
         if (!(droneUpdated_ && cartUpdated_)){
             return exploration_status_t::STATE_INITIALIZING;
@@ -102,7 +102,7 @@ class StateMachine{
     // for now, just publish a desired waypoint above the van
     int8_t executeRRT()
     {
-        ROS_INFO(" *** EXECUTING RRT *** ");
+        // ROS_INFO(" *** EXECUTING RRT *** ");
 
         geometry_msgs::Pose desPose;
         desPose.position.x = cart_state_[0];
@@ -122,7 +122,7 @@ class StateMachine{
             // publish the landing pose to /desiredWaypoint
             // such that the quad will try to land on the van's roof
 
-            ROS_INFO(" *** EXECUTING LANDING CONTROL *** ");
+            // ROS_INFO(" *** EXECUTING LANDING CONTROL *** ");
 
             geometry_msgs::Pose desPose;
             desPose.position.x = cart_state_[0];
