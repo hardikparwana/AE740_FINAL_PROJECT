@@ -25,6 +25,8 @@ project(rotors_gazebo_plugins)
 
 set(BUILD_MAVLINK_TOGGLE TRUE) # Set to TRUE to build MAVLINK plugin
 
+set(BUILD_OCTOMAP_PLUGIN TRUE)
+
 if(${BUILD_MAVLINK_TOGGLE})
   find_package(mavlink QUIET)
   if(${mavlink_FOUND})
