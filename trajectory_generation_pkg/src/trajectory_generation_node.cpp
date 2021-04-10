@@ -232,8 +232,8 @@ class WaypointFollower{
             desiredWaypointSingleSub = nh.subscribe(
                 "/desired_waypoint", 10, &WaypointFollower::generateTrajectorySingle, this);
 
-            cartPoseSub = nh.subscribe(
-                "/gazebo/model_states", 10, &WaypointFollower::goToCart, this);
+            // cartPoseSub = nh.subscribe(
+            //     "/gazebo/model_states", 10, &WaypointFollower::goToCart, this);
             
 
             trajectoryPubMarkers = nh.advertise<visualization_msgs::MarkerArray>("/trajectory",20);
