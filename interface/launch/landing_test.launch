@@ -2,7 +2,7 @@
 <!-- modelled after the launch file from rotors_gazebo/launch/mav_hovering_example.launch -->
 <launch>
   <arg name="mav_name" default="firefly"/>
-  <arg name="world_name" default="basic"/>
+  <arg name="world_name" default="outdoor"/>
   <arg name="enable_logging" default="false" />
   <arg name="enable_ground_truth" default="true" />
   <arg name="log_file" default="$(arg mav_name)" />
