@@ -109,11 +109,11 @@ public:
 		// set the bounds for the R^3 part of SE(3)
 		ob::RealVectorBounds bounds(3);
 
-		bounds.setLow(0,-20);
+		bounds.setLow (0,-20);
 		bounds.setHigh(0,20);
-		bounds.setLow(1,-20);
+		bounds.setLow (1,-20);
 		bounds.setHigh(1,20);
-		bounds.setLow(2,0);
+		bounds.setLow (2,0);
 		bounds.setHigh(2,20);
 
 		space->as<ob::SE3StateSpace>()->setBounds(bounds);

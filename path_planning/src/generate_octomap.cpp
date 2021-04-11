@@ -25,7 +25,7 @@ int main(int argc, char ** argv){
     
     ros::Subscriber vanPosSubscriber = nh.subscribe("/firefly/odometry_sensor1/odometry", 1, receivedQuadPos);
 
-    ros::Rate rate(0.2);
+    ros::Rate rate(0.002);
 
 
     ros::ServiceClient client;

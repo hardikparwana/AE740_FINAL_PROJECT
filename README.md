@@ -136,3 +136,7 @@ roslaunch interface landing_test.launch
 rosrun ph_planning generate_octomap
 ```
 this can be visualized in the rviz
+
+
+## first goal position:
+(5.0, 7.75, 0.75)
