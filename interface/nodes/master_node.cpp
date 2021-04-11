@@ -31,7 +31,7 @@ class StateMachine{
     }
              
     void cartPoseCallback(gazebo_msgs::ModelStates modelState){
-        int cartIndex = resolveGazeboIndex(modelState,std::string("cart"));
+        int cartIndex = resolveGazeboIndex(modelState,std::string("ambulance"));
         geometry_msgs::Pose cartPose = modelState.pose[cartIndex];
         cart_state_ << cartPose.position.x , cartPose.position.y , cartPose.position.z;
         cartUpdated_ = true;
