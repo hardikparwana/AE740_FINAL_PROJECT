@@ -27,8 +27,8 @@
   <arg name="robot_position" default="-x 0.0 -y 0.0 -z 0.01 -Y 1.57" />
   <arg name="robot_name" default="ambulance" />
     <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-sdf -model $(arg robot_name) -file $(find vehicle_description)/ambulance/model.sdf $(arg robot_position) "/>
-    
-  <!--group ns="$(arg mav_name)">
+
+  <group ns="$(arg mav_name)">
     <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
       <arg name="mav_name" value="$(arg mav_name)" />
       <arg name="model" value="$(find rotors_description)/urdf/mav_generic_odometry_sensor.gazebo" />
@@ -44,7 +44,7 @@
     <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/>
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-  </group-->
+  </group>
 
 
 <!-- Spawn the cart -->
