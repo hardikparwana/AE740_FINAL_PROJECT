@@ -125,3 +125,4 @@ rosservice call /world/get_octomap '{bounding_box_origin: {x: 5, y: 0, z: 1.75},
 ```
 and in rviz you should be able to see a topic /world/octomap 
 dont forget to change the referernce frame from map to world
+hi
