@@ -25,7 +25,9 @@ From the workspace folder, we just need to build the folder:
 and now hopefully all the dependencies can be built.
 
 
-
+```
+sudo apt-get install ros-melodic-octomap-rviz-plugins
+```
 
 ## Testing rotorS
 
@@ -115,3 +117,11 @@ rosservice call /world/get_octomap '{bounding_box_origin: {x: 5, y: 0, z: 1.75},
 ```
 reference: 
 https://github.com/ethz-asl/rotors_simulator/wiki/Generate-an-octomap-from-your-world
+
+
+to visualize make sure octomap rviz plugins is installed, run:
+```
+rosservice call /world/get_octomap '{bounding_box_origin: {x: 5, y: 0, z: 1.75}, bounding_box_lengths: {x: 20.8, y: 20.8, z: 4}, leaf_size: 0.1, publish_octomap: true}'
+```
+and in rviz you should be able to see a topic /world/octomap 
+dont forget to change the referernce frame from map to world
