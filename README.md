@@ -105,3 +105,13 @@ rosrun trajectory_generation trajectory_generation_node
 ```
 roslaunch interface landing_test.launch
 ```
+
+## Testing the octomap generation
+```
+roslaunch interface landing_test.launch
+```
+```
+rosservice call /world/get_octomap '{bounding_box_origin: {x: 5, y: 0, z: 1.75}, bounding_box_lengths: {x: 20.8, y: 20.8, z: 4}, leaf_size: 0.1, filename: output_filename.bt}'
+```
+reference: 
+https://github.com/ethz-asl/rotors_simulator/wiki/Generate-an-octomap-from-your-world
