@@ -416,9 +416,9 @@ int main(int argc, char **argv)
 	ros::NodeHandle n;
 	planner planner_object;
 
-	ros::Subscriber octree_sub = n.subscribe<octomap_msgs::Octomap>("/octomap_binary", 1, boost::bind(&octomapCallback, _1, &planner_object));
-	ros::Subscriber odom_sub = n.subscribe<nav_msgs::Odometry>("/bebop2/odometry_sensor1/odometry", 1, boost::bind(&odomCb, _1, &planner_object));
-	ros::Subscriber goal_sub = n.subscribe<geometry_msgs::PointStamped>("/clicked_point", 1, boost::bind(&goalCb, _1, &planner_object));
+	ros::Subscriber octree_sub = n.subscribe<octomap_msgs::Octomap>("/world/octomap", 1, boost::bind(&octomapCallback, _1, &planner_object));
+	ros::Subscriber odom_sub = n.subscribe<nav_msgs::Odometry>("/firefly/odometry_sensor1/odometry", 1, boost::bind(&odomCb, _1, &planner_object));
+	ros::Subscriber goal_sub = n.subscribe<geometry_msgs::PointStamped>("/goal_position", 1, boost::bind(&goalCb, _1, &planner_object));
 	// ros::Subscriber start_sub = n.subscribe<geometry_msgs::PointStamped>("/start/clicked_point", 1, boost::bind(&goalCb, _1, &planner_object));
 
 	vis_pub = n.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );

@@ -125,4 +125,14 @@ rosservice call /world/get_octomap '{bounding_box_origin: {x: 5, y: 0, z: 1.75},
 ```
 and in rviz you should be able to see a topic /world/octomap 
 dont forget to change the referernce frame from map to world
-hi
+
+
+## Live generation of octomap:
+```
+roslaunch interface landing_test.launch
+```
+
+```
+rosrun ph_planning generate_octomap
+```
+this can be visualized in the rviz

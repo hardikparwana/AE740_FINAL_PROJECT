@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+<arg name="delay" default="5.0" />
+
+
+<include file="$(find interface)/launch/landing_test.launch">
+<arg name="runStateMachine" value="false" />
+</include>
+
+
+</launch> 
