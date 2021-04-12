@@ -105,3 +105,11 @@ rosrun trajectory_generation trajectory_generation_node
 ```
 roslaunch interface landing_test.launch
 ```
+
+
+## Teleop
+```
+roslaunch interface landing_test.launch world_name:=outdoor
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+rosrun vehicle_description move_van_holonomic
+```
