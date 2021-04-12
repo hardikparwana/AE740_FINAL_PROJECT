@@ -107,7 +107,7 @@ class StateMachine{
         geometry_msgs::Pose desPose;
         desPose.position.x = cart_state_[0];
         desPose.position.y = cart_state_[1];
-        desPose.position.z = cart_state_[2] + 1.0;
+        desPose.position.z = cart_state_[2] + 4.0;
 
         desPosePub.publish(desPose);
 
@@ -127,7 +127,7 @@ class StateMachine{
             geometry_msgs::Pose desPose;
             desPose.position.x = cart_state_[0];
             desPose.position.y = cart_state_[1];
-            desPose.position.z = cart_state_[2];
+            desPose.position.z = cart_state_[2] + 2.9;
 
             desPosePub.publish(desPose);
 
@@ -152,7 +152,7 @@ class StateMachine{
     bool checkInitialHovering(){
 
         // expected location for hovering
-        Eigen::Vector3d expected_state(0, 0, 1);
+        Eigen::Vector3d expected_state(0, 0, 4.0);
 
         // compute distance
         float dist = (expected_state - current_state_).norm();

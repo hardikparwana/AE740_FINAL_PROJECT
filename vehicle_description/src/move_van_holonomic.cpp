@@ -41,8 +41,6 @@ int resolveGazeboIndex( gazebo_msgs::ModelStates modelState, std::string name  )
         
         cartUpdated_ = true;
 
-        std::cout << "got pose" << std::endl;
-
     }
 
  void velCallback(geometry_msgs::Twist msg){
@@ -55,7 +53,6 @@ int main(int argc, char** argv)
 	ros::init(argc,argv, "move_cart_holonomic");
 	ros::NodeHandle n;
 
-	// ros::Publisher pub = n.advertise<geometry_msgs::Twist>("/gazebo/set_model_state",50);
 	ros::ServiceClient client = n.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
 	ros::Subscriber sub = n.subscribe("/gazebo/model_states",1,cartPoseCallback);
 
@@ -68,45 +65,26 @@ int main(int argc, char** argv)
 	state.model_name =  (std::string) "ambulance";
 	state.reference_frame = (std::string) "world";
 
-	// geometry_msgs::Twist cmd_vel;
-	
-	// cmd_vel.linear.y = 0.0f;
- // 	cmd_vel.linear.z = 0.0f;
- // 	cmd_vel.linear.x = 0.0f;
- // 	cmd_vel.angular.x = 0.0f;
- //    cmd_vel.angular.y = 0.0f;
- //    cmd_vel.angular.z = 0.0f;
 
 	while(ros::ok())
 	{
 
-
+		if (!cartUpdated_){
+			ros::spinOnce();
+			continue;
+		}
 
 
  		state.pose = cartPose;
  		state.twist = vel;
- 		// state.pose.position.x = state.pose.position.x + 0.2;
- 	// 	state.twist.linear.x = cmd_vel.linear.x;
- 	// 	state.twist.linear.y = cmd_vel.linear.y;
- 	// 	state.twist.linear.z = cmd_vel.linear.z;
 
-		// state.twist.angular.x = cmd_vel.angular.x;
- 	// 	state.twist.angular.y = cmd_vel.angular.y;
- 	// 	state.twist.angular.z = cmd_vel.angular.z; 		
-
- 		std::cout << "Calling service" << std::endl;
-
- 		// pub.publish(state);
  		gazebo_msgs::SetModelState setmodelstate;
 		setmodelstate.request.model_state = state;
 		client.call(setmodelstate);
-
-		std::cout << "got result" << std::endl;
 		
 		ros::spinOnce();
     	r.sleep();
 
-    	std::cout << "got result 1" << std::endl;
 	}
 
 
