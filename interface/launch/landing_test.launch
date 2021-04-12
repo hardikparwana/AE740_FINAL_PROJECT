@@ -24,6 +24,11 @@
     <arg name="verbose" value="$(arg verbose)"/>
   </include>
 
+
+  <arg name="van_position" default="-x 2.0 -y 2.0 -z 0.01 -Y 1.57" />
+  <arg name="robot_name" default="ambulance" />
+    <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-sdf -model $(arg robot_name) -file $(find vehicle_description)/ambulance/model.sdf $(arg van_position) "/>
+
   <group ns="$(arg mav_name)">
     <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
       <arg name="mav_name" value="$(arg mav_name)" />
@@ -43,19 +48,9 @@
   </group>
 
 
-<!-- Spawn the cart -->
-<group>
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find vehicle_description)/urdf/cart_holonomic.xacro'"/>
-    <!-- initial position of robot in environment -->
-    <arg name="x" default="1"/>
-    <arg name="y" default="2"/>
-    <arg name="z" default="0.1"/>
-    <!-- use spawn service of robot to get robot in simulator -->
-    <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-          args="-urdf -param robot_description -model cart -x $(arg x) -y $(arg y) -z $(arg z)" />
+  <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
 
-    <node name="move_cart_holonomic" pkg="vehicle_description" type="move_cart_holonomic" output="screen" />          
-</group>
+  <node name="move_van_holonomic" pkg="vehicle_description" type="move_van_holonomic" output="screen" />
 
 <!-- Launch the trajectory generation node-->
 <node name="trajectory_generation_node" pkg="trajectory_generation" type="trajectory_generation_node" output="screen" />

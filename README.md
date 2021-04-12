@@ -140,3 +140,10 @@ this can be visualized in the rviz
 
 ## first goal position:
 (5.0, 7.75, 0.75)
+
+## Teleop
+```
+roslaunch interface landing_test.launch world_name:=outdoor
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+rosrun vehicle_description move_van_holonomic
+```
