@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <iterator>
 
+
 class WaypointFollower{
     ros::Subscriber currentStateSub;
     ros::Subscriber desiredWaypointsSub;
@@ -46,6 +47,10 @@ class WaypointFollower{
 
     ros::Time lastReplan;
     bool runTraj = true;
+
+
+    double v_max = 1;
+    double a_max = 1;
 
 
 
@@ -143,7 +148,7 @@ class WaypointFollower{
 
         // Start from the current position and zero orientation
         using namespace mav_trajectory_generation::derivative_order;
-        start_position.makeStartOrEnd(current_state, SNAP);
+        start_position.makeStartOrEnd(current_state, VELOCITY);
         vertices.push_back(start_position); 
 
         for (auto i = 0; i < N; i++){
@@ -156,7 +161,7 @@ class WaypointFollower{
 
             // if terminal state:  
             if (i == N-1){
-                nextVert.makeStartOrEnd(nextPos_eigen, SNAP);
+                nextVert.makeStartOrEnd(nextPos_eigen, VELOCITY);
             }
             else{
                 nextVert.addConstraint(POSITION, nextPos_eigen);
@@ -169,8 +174,7 @@ class WaypointFollower{
 
         // allocate segment times
         std::vector<double> segment_times;
-        const double v_max = 2.0;
-        const double a_max = 5.0;
+        
 
         segment_times = mav_trajectory_generation::estimateSegmentTimes(vertices, v_max, a_max);
 
@@ -232,6 +236,7 @@ class WaypointFollower{
             desiredWaypointSingleSub = nh.subscribe(
                 "/desired_waypoint", 10, &WaypointFollower::generateTrajectorySingle, this);
 
+            
             // cartPoseSub = nh.subscribe(
             //     "/gazebo/model_states", 10, &WaypointFollower::goToCart, this);
             
@@ -241,6 +246,8 @@ class WaypointFollower{
             trajectoryPub = nh.advertise<trajectory_msgs::MultiDOFJointTrajectory>("/firefly/command/trajectory",20);
 
             desPosePub = nh.advertise<geometry_msgs::PoseStamped>("/firefly/command/pose",20);
+
+
 
         }
 

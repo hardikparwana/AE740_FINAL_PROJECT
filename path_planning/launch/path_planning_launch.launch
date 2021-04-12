@@ -5,7 +5,7 @@
 
 
 <include file="$(find interface)/launch/landing_test.launch">
-<arg name="runStateMachine" value="false" />
+<arg name="runStateMachine" value="true" />
 </include>
 
 

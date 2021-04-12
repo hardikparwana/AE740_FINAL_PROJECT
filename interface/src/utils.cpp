@@ -57,3 +57,15 @@ float distancePoints(Eigen::Vector3d p1, Eigen::Vector3d p2)
 {
 	return (p1-p2).norm();
 }
+
+bool checkLanded(Eigen::Vector3d robot, Eigen::Vector3d van)
+{
+
+	if (!checkDistanceToGoal(robot,van)){
+		return false;
+	}
+	if ((robot-van).norm() < 0.3){
+		return true;
+	}
+	return false;
+}

@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   sensor_msgs
+  std_msgs
   roscpp
   tf
   eigen_catkin

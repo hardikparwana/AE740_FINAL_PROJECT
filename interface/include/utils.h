@@ -16,3 +16,5 @@ int resolveGazeboIndex( gazebo_msgs::ModelStates modelState, std::string name  )
 bool checkDistanceToGoal(Eigen::Vector3d robot, Eigen::Vector3d van);
 
 float distancePoints(Eigen::Vector3d p1, Eigen::Vector3d p2);
+
+bool checkLanded(Eigen::Vector3d robot, Eigen::Vector3d van);
