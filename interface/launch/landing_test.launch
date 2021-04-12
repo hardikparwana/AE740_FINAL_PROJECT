@@ -12,7 +12,7 @@
   <!-- The following line causes gzmsg and gzerr messages to be printed to the console
       (even when Gazebo is started through roslaunch) -->
   <arg name="verbose" default="false"/>
-  <arg name="runStateMachine" default="true>"/>
+  <arg name="runStateMachine" default="true"/>
 
   <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find rotors_gazebo)/models"/>
   <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find rotors_gazebo)/models"/>
@@ -27,7 +27,7 @@
 
   <arg name="van_position" default="-x 2.0 -y 2.0 -z 0.01 -Y 1.57" />
   <arg name="robot_name" default="ambulance" />
-    <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-sdf -model $(arg robot_name) -file $(find vehicle_description)/ambulance/model.sdf $(arg van_position) "/>
+  <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-sdf -model $(arg robot_name) -file $(find vehicle_description)/ambulance/model.sdf $(arg van_position) "/>
 
   <group ns="$(arg mav_name)">
     <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
