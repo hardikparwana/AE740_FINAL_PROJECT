@@ -25,7 +25,9 @@ From the workspace folder, we just need to build the folder:
 and now hopefully all the dependencies can be built.
 
 
-
+```
+sudo apt-get install ros-melodic-octomap-rviz-plugins
+```
 
 ## Testing rotorS
 
@@ -106,6 +108,38 @@ rosrun trajectory_generation trajectory_generation_node
 roslaunch interface landing_test.launch
 ```
 
+## Testing the octomap generation
+```
+roslaunch interface landing_test.launch
+```
+```
+rosservice call /world/get_octomap '{bounding_box_origin: {x: 5, y: 0, z: 1.75}, bounding_box_lengths: {x: 20.8, y: 20.8, z: 4}, leaf_size: 0.1, filename: output_filename.bt}'
+```
+reference: 
+https://github.com/ethz-asl/rotors_simulator/wiki/Generate-an-octomap-from-your-world
+
+
+to visualize make sure octomap rviz plugins is installed, run:
+```
+rosservice call /world/get_octomap '{bounding_box_origin: {x: 5, y: 0, z: 1.75}, bounding_box_lengths: {x: 20.8, y: 20.8, z: 4}, leaf_size: 0.1, publish_octomap: true}'
+```
+and in rviz you should be able to see a topic /world/octomap 
+dont forget to change the referernce frame from map to world
+
+
+## Live generation of octomap:
+```
+roslaunch interface landing_test.launch
+```
+
+```
+rosrun ph_planning generate_octomap
+```
+this can be visualized in the rviz
+
+
+## first goal position:
+(5.0, 7.75, 0.75)
 
 ## Teleop
 ```
