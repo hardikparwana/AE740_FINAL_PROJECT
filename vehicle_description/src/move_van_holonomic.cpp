@@ -50,7 +50,7 @@ int resolveGazeboIndex( gazebo_msgs::ModelStates modelState, std::string name  )
 
 int main(int argc, char** argv)
 {
-	ros::init(argc,argv, "move_cart_holonomic");
+	ros::init(argc,argv, "move_van_holonomic");
 	ros::NodeHandle n;
 
 	ros::ServiceClient client = n.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");

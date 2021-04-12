@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 	ros::init(argc,argv, "move_cart_holonomic");
 	ros::NodeHandle n;
 
-	ros::Publisher pub = n.advertise<geometry_msgs::Twist>("/cmd_vel",50);
+	ros::Publisher pub = n.advertise<geometry_msgs::Twist>("/cmd_holonomic",50);
 
 	ros::Rate r(50);
 
