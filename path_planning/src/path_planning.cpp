@@ -56,6 +56,7 @@ ros::Publisher traj_pub;
 
 class planner {
 public:
+
 	void init_start(void)
 	{
 		if(!set_start)
