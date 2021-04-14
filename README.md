@@ -147,3 +147,18 @@ roslaunch interface landing_test.launch world_name:=outdoor
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 rosrun vehicle_description move_van_holonomic
 ```
+
+
+## Testing aruco markers:
+```
+roslaunch interface landing_test.launch
+```
+
+navigate somewhere nice and `rviz`
+
+```
+roslaunch aruco_ros single.launch
+```
+now launch something that requires an output from aruco detection (detection analysis stops otherwise)
+and if the marker is detected, the pose will be published to `/aruco_single/pose`
+

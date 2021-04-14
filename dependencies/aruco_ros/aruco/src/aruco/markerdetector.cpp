@@ -40,9 +40,6 @@
 #include <thread>
 #include "debug.h"
 
-#define _DEBUG
-#define DEBUG
-
 #ifdef _DEBUG
 #include <opencv2/highgui/highgui.hpp>
 #endif
@@ -570,8 +567,6 @@ void MarkerDetector::detect(const cv::Mat& input, std::vector<Marker>& detectedM
   else
     grey = input;
   Timer.add("ConvertGrey");
-
-  std::cout << "CONVERTED IMAGE TO GRAY" << std::endl;
 
   /*****************************************************************
    * CREATE LOW RESOLUTION IMAGE IN WHICH MARKERS WILL BE DETECTED *
