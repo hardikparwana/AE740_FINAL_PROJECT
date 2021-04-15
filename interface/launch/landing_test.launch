@@ -53,7 +53,7 @@
   <node name="move_van_holonomic" pkg="vehicle_description" type="move_van_holonomic" output="screen" />
 
 <!-- Launch the trajectory generation node-->
-<!-- <node name="trajectory_generation_node" pkg="trajectory_generation" type="trajectory_generation_node" output="screen" /> -->
+<node name="trajectory_generation_node" pkg="trajectory_generation" type="trajectory_generation_node" output="screen" />
 
 
 <!-- Finally launch the state machine node-->
@@ -61,8 +61,11 @@
   <node name="state_machine" pkg="interface" type="master_node" output="screen"/>
 </group>
 
-<node name="generate_octomap" pkg="path_planning" type="generate_octomap" output="screen" />
+<!-- <node name="generate_octomap" pkg="path_planning" type="generate_octomap" output="screen" /> -->
+<node name="publish_octomap" pkg="path_planning" type="publish_octomap" output="screen" />
 
 <node name="path_planning" pkg="path_planning" type="path_planning_node" output="screen"/>
+
+<node type="rviz" name="rviz" pkg="rviz" args="-d $(find interface)/rviz/main.rviz" />
 
 </launch>

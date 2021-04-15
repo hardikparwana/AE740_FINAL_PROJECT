@@ -12,10 +12,10 @@ ros::Publisher mapPub;
 
 void loadOctomap(){ 
 
-    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/output_filename_med.bt";
+    const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/output_filename_med.bt";
 
-    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/outdoor_world.bt";
-    const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/output_filename_complete.bt";
+    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/output_filename_complete.bt";
+    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/outdoor_full.bt";
     
     ROS_INFO_STREAM("Starting to load OctMap from " << filename);
     
@@ -49,20 +49,24 @@ int main(int argc, char **argv)
 
     ROS_INFO("Launching Octomap Publisher...");
 
-	// ros::Subscriber octree_sub = n.subscribe<octomap_msgs::Octomap>("/world/octomap", 1, boost::bind(&octomapCallback, _1, &planner_object));
+    int numSub = 0;
+    ros::Rate rate(1);
+
 
 	mapPub = nh.advertise<octomap_msgs::Octomap>( "/world/octomap", 1 );
 
     ROS_INFO("Waiting for a subscriber...");
-    while( mapPub.getNumSubscribers() < 1){
+    while(ros::ok() ){
+
+        if (mapPub.getNumSubscribers() != numSub){
+            numSub= mapPub.getNumSubscribers();
+            
+            ROS_INFO("Subscriber found! Publishing Octomap");
+            loadOctomap();
+        }
         ros::spinOnce();
+        rate.sleep();
     }
-
-    ROS_INFO("Subscriber found! Publishing Octomap");
-
-    loadOctomap();
-	
-	ros::spin();
 
 	return 0;
 }

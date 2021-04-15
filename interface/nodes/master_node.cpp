@@ -25,6 +25,8 @@ class StateMachine{
     Eigen::Vector3d cart_state_;
 
     Eigen::Vector3d nextTargetPoint;
+    Eigen::Vector3d realTargetPoint;
+
 
     int8_t state_ = 0;
     
@@ -151,6 +153,7 @@ class StateMachine{
     }
 
     int8_t followRRT_to_van(){
+
         
         if (distancePoints(nextTargetPoint, current_state_) < 0.5){
             return choose_next_landing_mode();
@@ -191,7 +194,7 @@ class StateMachine{
             return exploration_status_t::STATE_PROXIMITY_CONTROL;
         }
 
-        return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
+        return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
 
     }
 

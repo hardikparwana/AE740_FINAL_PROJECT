@@ -56,6 +56,7 @@ ros::Publisher traj_pub;
 
 class planner {
 public:
+
 	void init_start(void)
 	{
 		if(!set_start)
@@ -111,10 +112,10 @@ public:
 		ob::RealVectorBounds bounds(3);
 
 		bounds.setLow (0,-20);
-		bounds.setHigh(0,20);
+		bounds.setHigh(0,100);
 		bounds.setLow (1,-20);
 		bounds.setHigh(1,20);
-		bounds.setLow (2,0);
+		bounds.setLow (2,-0.5);
 		bounds.setHigh(2,20);
 
 		space->as<ob::SE3StateSpace>()->setBounds(bounds);
