@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /Grid1
         - /OccupancyGrid1
       Splitter Ratio: 0.5
     Tree Height: 549
@@ -36,7 +37,7 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 1
+      Cell Size: 5
       Class: rviz/Grid
       Color: 160; 160; 164
       Enabled: true
@@ -50,14 +51,14 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 10
+      Plane Cell Count: 100
       Reference Frame: <Fixed Frame>
       Value: true
     - Class: octomap_rviz_plugin/OccupancyGrid
       Enabled: true
-      Max. Height Display: inf
+      Max. Height Display: 3.4028234663852886e+38
       Max. Octree Depth: 16
-      Min. Height Display: -inf
+      Min. Height Display: -3.4028234663852886e+38
       Name: OccupancyGrid
       Octomap Topic: /world/octomap
       Queue Size: 5
@@ -153,25 +154,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 13.342184066772461
+      Distance: 94.04930114746094
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.7469803094863892
-        Y: 0.8284964561462402
-        Z: 4.305766582489014
+        X: 16.241100311279297
+        Y: 5.916581153869629
+        Z: 15.116004943847656
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5703980326652527
+      Pitch: 0.3153979778289795
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.9254000186920166
+      Yaw: 3.6504008769989014
     Saved: ~
 Window Geometry:
   Displays:
@@ -190,4 +191,4 @@ Window Geometry:
     collapsed: false
   Width: 1200
   X: 85
-  Y: 112
+  Y: 82

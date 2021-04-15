@@ -12,11 +12,10 @@ ros::Publisher mapPub;
 
 void loadOctomap(){ 
 
-    if (numSum = )
+    const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/output_filename_med.bt";
 
-    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/output_filename_med.bt";
-
-    const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/output_filename_complete.bt";
+    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/output_filename_complete.bt";
+    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/outdoor_full.bt";
     
     ROS_INFO_STREAM("Starting to load OctMap from " << filename);
     
@@ -59,10 +58,11 @@ int main(int argc, char **argv)
     ROS_INFO("Waiting for a subscriber...");
     while(ros::ok() ){
 
-        if (mapPub.getNumSubscribers() !== numSub){
+        if (mapPub.getNumSubscribers() != numSub){
             numSub= mapPub.getNumSubscribers();
-            loadOctomap();
+            
             ROS_INFO("Subscriber found! Publishing Octomap");
+            loadOctomap();
         }
         ros::spinOnce();
         rate.sleep();
