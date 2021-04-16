@@ -74,6 +74,10 @@ To see the pose array, we additionally need to run
 ```
 rosrun tf static_transrm_publisher 0 0 0 0 0 0 1 map /world 10
 ```
+(or maybe 
+rosrun tf static_transform_publisher 0 0 0 0 0 0 1 map /world 10
+)
+``
 and then
 ```
 rviz

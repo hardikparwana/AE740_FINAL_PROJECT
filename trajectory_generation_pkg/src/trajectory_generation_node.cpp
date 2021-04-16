@@ -49,8 +49,8 @@ class WaypointFollower{
     bool runTraj = true;
 
 
-    double v_max = 1;
-    double a_max = 1;
+    double v_max = 2;
+    double a_max = 2;
 
 
 

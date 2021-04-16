@@ -155,6 +155,8 @@ add_executable(scale src/scaling.cpp)
 add_executable(goal_transform src/goalpoint_transformer.cpp)
 add_executable(transform_pointcloud src/transform.cpp)
 add_executable(generate_octomap src/generate_octomap.cpp)
+add_executable(publish_octomap src/publish_octomap.cpp)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -203,6 +205,13 @@ target_link_libraries(transform_pointcloud
 target_link_libraries(generate_octomap
    ${catkin_LIBRARIES}
 )
+
+target_link_libraries(publish_octomap
+   ${catkin_LIBRARIES}
+   ${PCL_LIBRARIES}
+   ${OCTOMAP_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############
