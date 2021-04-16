@@ -14,23 +14,16 @@ std::string filename;
 
 void loadOctomap(){ 
 
-    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/output_filename_med.bt";
-
-    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/output_filename_complete.bt";
-    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/outdoor_full.bt";
-    
     ROS_INFO_STREAM("Starting to load OctMap from " << filename);
     
     octomap::OcTree octree(0.1);
 	bool suc = octree.readBinary(filename);
 
     if (!suc){
-        ROS_ERROR("READ BINARY NOT SUCCESFUL!");
-        ros::kill()
+        ROS_ERROR("READ BINARY NOT SUCCESFUL! KILLING PUBLISH_OCTOMAP_NODE! ");
+        ros::shutdown();
     }
 
-    // octomap::OcTree* octree = new octomap::OcTree(filename);
-	// fcl::OcTree* tree = new fcl::OcTree(std::shadesired_trajectory_waypointsred_ptr<const octomap::OcTree>(&temp_tree));
 	ROS_INFO("Created OcTree");
     octomap_msgs::Octomap bmap_msg;
     octomap_msgs::binaryMapToMsg(octree, bmap_msg);
@@ -44,6 +37,14 @@ void loadOctomap(){
 
 }
 
+void getFileName(){
+    std::string file;
+    std::string fileDir;
+    nh.getParam("octomapFileDir", fileDir);
+    nh.getParam("octomapFile", file);
+    filename = fileDir + file;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -52,29 +53,26 @@ int main(int argc, char **argv)
 
     ROS_INFO("Launching Octomap Publisher...");
 
-    std::string file;
-    std::string fileDir;
+    getFileName();
 
-    nh.getParam("octomapFileDir", fileDir);
-    nh.getParam("octomapFile", file);
-
-    filename = fileDir + file;
-
-
-    int numSub = 0;
+    // checks for new subscribers once every second    
     ros::Rate rate(1);
 
+    int numSub = 0;
 	mapPub = nh.advertise<octomap_msgs::Octomap>( "/world/octomap", 1 );
 
     ROS_INFO("Waiting for a subscriber...");
     while(ros::ok() ){
 
         if (mapPub.getNumSubscribers() != numSub){
+
             numSub= mapPub.getNumSubscribers();
             
-            ROS_INFO("Subscriber found! Publishing Octomap");
+            ROS_INFO("Subscriber count changed! Publishing Octomap");
+            
             loadOctomap();
         }
+
         ros::spinOnce();
         rate.sleep();
     }
