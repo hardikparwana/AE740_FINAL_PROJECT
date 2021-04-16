@@ -10,9 +10,11 @@
 ros::Publisher mapPub;
 
 
+std::string filename;
+
 void loadOctomap(){ 
 
-    const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/output_filename_med.bt";
+    // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/output_filename_med.bt";
 
     // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/output_filename_complete.bt";
     // const std::string filename = "/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/outdoor_full.bt";
@@ -23,7 +25,8 @@ void loadOctomap(){
 	bool suc = octree.readBinary(filename);
 
     if (!suc){
-        ROS_WARN("READ BINARY NOT SUCCESFUL!");
+        ROS_ERROR("READ BINARY NOT SUCCESFUL!");
+        ros::kill()
     }
 
     // octomap::OcTree* octree = new octomap::OcTree(filename);
@@ -49,9 +52,17 @@ int main(int argc, char **argv)
 
     ROS_INFO("Launching Octomap Publisher...");
 
+    std::string file;
+    std::string fileDir;
+
+    nh.getParam("octomapFileDir", fileDir);
+    nh.getParam("octomapFile", file);
+
+    filename = fileDir + file;
+
+
     int numSub = 0;
     ros::Rate rate(1);
-
 
 	mapPub = nh.advertise<octomap_msgs::Octomap>( "/world/octomap", 1 );
 

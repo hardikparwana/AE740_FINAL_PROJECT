@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
+    <rosparam file="$(find path_planning)/config/params.yaml" />
 
-<arg name="delay" default="5.0" />
+    <param name="octomapFileDir" value="$(find path_planning)/" />
 
-
-<include file="$(find interface)/launch/landing_test.launch">
-<arg name="runStateMachine" value="true" />
-</include>
+    <node name="publish_octomap" pkg="path_planning" type="publish_octomap" output="screen" />
+    <node name="path_planning" pkg="path_planning" type="path_planning_node" output="screen"/>
 
 
 </launch> 
