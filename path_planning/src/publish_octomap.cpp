@@ -37,14 +37,6 @@ void loadOctomap(){
 
 }
 
-void getFileName(){
-    std::string file;
-    std::string fileDir;
-    nh.getParam("octomapFileDir", fileDir);
-    nh.getParam("octomapFile", file);
-    filename = fileDir + file;
-}
-
 
 int main(int argc, char **argv)
 {
@@ -53,7 +45,11 @@ int main(int argc, char **argv)
 
     ROS_INFO("Launching Octomap Publisher...");
 
-    getFileName();
+    std::string file;
+    std::string fileDir;
+    nh.getParam("octomapFileDir", fileDir);
+    nh.getParam("octomapFile", file);
+    filename = fileDir + file;
 
     // checks for new subscribers once every second    
     ros::Rate rate(1);
