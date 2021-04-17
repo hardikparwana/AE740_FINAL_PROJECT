@@ -33,6 +33,8 @@
   <build_export_depend>gazebo_msgs</build_export_depend>
   <exec_depend>gazebo_msgs</exec_depend>
 
+  <depend>ackermann_msgs</depend>
+
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->

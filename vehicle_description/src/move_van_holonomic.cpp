@@ -1,4 +1,7 @@
 #include <ros/ros.h>
+
+
+#include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <gazebo_msgs/ModelState.h>
 #include <gazebo_msgs/ModelStates.h>
@@ -7,46 +10,59 @@
 
 #include <sys/select.h>
 
+#include <cmath>
 
-#include <geometry_msgs/Pose.h>
 
 using namespace std;
 
 bool cartUpdated_ = false;
 bool vel_updated_ = false;
-geometry_msgs::Pose cartPose;
 
-geometry_msgs::Twist vel;
+double van_x = 2.0;
+double van_y = 2.0;
+double van_z = 0.05;
+double van_yaw = 0;
 
-int resolveGazeboIndex( gazebo_msgs::ModelStates modelState, std::string name  )
-{
-	int index;
-    for (int i=0; i<modelState.name.size()+1; i++){
-        if (i == modelState.name.size()){ // no cart found
-        	ROS_ERROR("Gazebo Name Resolution failed: No link named %s", name);
-            return -1;
-        }
-        if (std::strcmp(modelState.name[i].c_str(), name.c_str()) == 0){
-            index = i;
-            break;
-        }   
-    }
-    return index;
+
+void velCallback(geometry_msgs::Twist msg){
+       
+ 	vel = msg;
+}
+
+
+
+
+
+
+void step_holonomic(double dt){
+
+	van_x  	 += vel.linear.x  * dt;
+	van_y  	 += vel.linear.y  * dt;
+	van_z  	 += vel.linear.z  * dt;
+	van_yaw  += vel.angular.z * dt;
 
 }
 
- void cartPoseCallback(gazebo_msgs::ModelStates modelState){
-        int cartIndex = resolveGazeboIndex(modelState,std::string("ambulance"));
-        cartPose = modelState.pose[cartIndex];
-        
-        cartUpdated_ = true;
+void step_dubins(double dt){
 
-    }
+	double vx = van_v * std::cos(van_yaw);
+	double vy = van_v * std::sin(van_yaw);
 
- void velCallback(geometry_msgs::Twist msg){
-       
- 	vel = msg;
-    }
+
+	van_x +=  vx * dt;
+	van_y +=  vy * dt;
+	van_yaw += van_omega * dt;
+
+	van_v =  vel.linear.x;
+	van_omega = vel.angular.z;
+
+	ROS_INFO_STREAM("x " << van_x  << " y " << van_y << " yaw " << van_yaw << " vx " << vx << " vy " << vy);
+}
+
+void step(double dt){
+	// choose stepping mode
+	step_dubins(dt);
+}
 
 int main(int argc, char** argv)
 {
@@ -54,29 +70,38 @@ int main(int argc, char** argv)
 	ros::NodeHandle n;
 
 	ros::ServiceClient client = n.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
-	ros::Subscriber sub = n.subscribe("/gazebo/model_states",1,cartPoseCallback);
 
 	ros::Subscriber sub_vel = n.subscribe("/cmd_vel",1,velCallback);
 
-	ros::Rate r(50);
+	float dt = 0.001;
+	
+	ros::Rate r(1.0/dt);
 
-	gazebo_msgs::ModelState state;
-
-	state.model_name =  (std::string) "ambulance";
-	state.reference_frame = (std::string) "world";
+	
 
 
 	while(ros::ok())
 	{
 
-		if (!cartUpdated_){
-			ros::spinOnce();
-			continue;
-		}
+		// update internal state
+		step(dt);
 
+		gazebo_msgs::ModelState state;
 
- 		state.pose = cartPose;
- 		state.twist = vel;
+		state.model_name =  (std::string) "ambulance";
+		state.reference_frame = (std::string) "world";
+	
+		state.pose.position.x = van_x;
+		state.pose.position.y = van_y;
+		state.pose.position.z = van_z;
+
+		// state.pose.quaternion.setRPY( 0, 0, van_yaw); to avoid importing tf/tf2
+		state.pose.orientation.x = 0;
+		state.pose.orientation.y = 0;
+		state.pose.orientation.z = std::sin(0.5*van_yaw + 0.25*M_PI);
+		state.pose.orientation.w = std::cos(0.5*van_yaw + 0.25*M_PI); 
+
+		//state.pose.vel/ang_vel = 0 # since our update rate is high enough
 
  		gazebo_msgs::SetModelState setmodelstate;
 		setmodelstate.request.model_state = state;

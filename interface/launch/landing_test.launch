@@ -25,7 +25,7 @@
   </include>
 
 
-  <arg name="van_position" default="-x 2.0 -y 2.0 -z 0.01 -Y 1.57" />
+  <arg name="van_position" default="-x 2.0 -y 2.0 -z 0.5 -Y 1.57" />
   <arg name="robot_name" default="ambulance" />
   <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-sdf -model $(arg robot_name) -file $(find vehicle_description)/ambulance/model.sdf $(arg van_position) "/>
 
@@ -50,7 +50,10 @@
 <!-- Teleop is NOT launched here - launch it in a separate terminal -->
   <!-- <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" /> -->
 
-  <node name="move_van_holonomic" pkg="vehicle_description" type="move_van_holonomic" output="screen" />
+  <!-- <node name="move_van_holonomic" pkg="vehicle_description" type="move_van_holonomic" output="screen" /> -->
+  
+  
+  <node name="drive_van" pkg="vehicle_description" type="drive_van" output="screen" />
 
 <!-- Launch the trajectory generation node-->
 <node name="trajectory_generation_node" pkg="trajectory_generation" type="trajectory_generation_node" output="screen" />
