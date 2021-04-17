@@ -168,3 +168,28 @@ roslaunch aruco_ros single.launch
 now launch something that requires an output from aruco detection (detection analysis stops otherwise)
 and if the marker is detected, the pose will be published to `/aruco_single/pose`
 
+
+
+
+## Testing landing with driving truck
+
+```
+roslaunch interface landing_test.launch
+```
+in a separate terminal
+```
+rosrun ackermann_drive_teleop keyop.py
+```
+this allows you to drive using `arrow keys`, stop with `spacebar` and reset speed and steering using `tab` 
+
+Once the drone is launched you can tell it what to do:
+```
+rostopic pub /changeState
+```
+press `tab` enough times for autocomplete. 
+Set the integer to:
+```
+1 - hover at current state
+2 - plan RRT and visual land on van
+5 - plan RRT and arrive at package drop location
+```
