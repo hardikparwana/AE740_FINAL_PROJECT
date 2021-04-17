@@ -20,5 +20,7 @@
         <param name="corner_refinement"  value="$(arg corner_refinement)" />
     </node>
 
+    <!-- <remap from="/aruco_single/pose" to="/firefly/command/pose" /> -->
+
 </launch>
 

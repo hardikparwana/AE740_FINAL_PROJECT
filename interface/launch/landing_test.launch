@@ -63,6 +63,8 @@
 
 <include file="$(find path_planning)/launch/path_planning_launch.launch" />
 
+<include file="$(find aruco_ros)/launch/single.launch" />
+
 <node type="rviz" name="rviz" pkg="rviz" args="-d $(find interface)/rviz/main.rviz" />
 
 </launch>

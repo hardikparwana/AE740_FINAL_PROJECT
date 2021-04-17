@@ -29,6 +29,8 @@ and now hopefully all the dependencies can be built.
 sudo apt-get install ros-melodic-octomap-rviz-plugins
 ```
 
+If you have issues with `nlopt` not building, go into `catkin_ws/build/nlopt` and `sudo chmod+x make_install_nlopt.sh`
+
 ## Testing rotorS
 
 using the basic 
