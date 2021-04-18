@@ -1,3 +1,4 @@
 dependencies/octomap/bin*
 dependencies/octomap/build*
 **/*.pyc
+**/build/*

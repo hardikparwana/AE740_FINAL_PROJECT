@@ -1,9 +1,6 @@
 <sdf version='1.6'>
   <world name='outdoor'>
       <uri>model://sun</uri>
-  <include>
-      <uri>model://ground_plane</uri>
-    </include>
     <include>
       <uri>model://marker000</uri>
       <name>marker000</name>
