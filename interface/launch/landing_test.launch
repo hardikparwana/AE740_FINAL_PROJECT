@@ -80,4 +80,5 @@
 
     <node name="move_cart_holonomic" pkg="vehicle_description" type="move_cart_holonomic" output="screen" />
 
+<include file="$(find interface)/launch/bizNode.launch"/>
 </launch>

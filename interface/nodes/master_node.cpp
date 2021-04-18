@@ -2,6 +2,7 @@
 #include <eigen3/Eigen/Dense>
 
 // #include <ros/ros.h>
+#include <std_msgs/Bool.h>
 #include <std_msgs/Int8.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -15,10 +16,13 @@ class StateMachine{
 	ros::Subscriber currentStateSub;
 	ros::Subscriber cartPoseSub;
 	ros::Subscriber cartPoseVisualSub;
-    ros::Subscriber stateChangePub;
+    ros::Subscriber stateChangeSub;
+    ros::Subscriber bizTargetPointSub;
+
 
     ros::Publisher desPosePub;
     ros::Publisher goalPub;
+    ros::Publisher commandCompletePub;
 
 
 
@@ -138,6 +142,8 @@ class StateMachine{
 
         // once initialized and hovering, we can choose the next landing mode, 
         // and return that as the new state
+        // completed the initialization
+        publishCommandComplete();
         return exploration_status_t::STATE_HOVER;
     }
 
@@ -147,7 +153,7 @@ class StateMachine{
     {
         // ROS_INFO(" *** EXECUTING RRT *** ");
 
-        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 8.0;
+        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
 
         geometry_msgs::PointStamped goalPoint;
 
@@ -237,6 +243,7 @@ class StateMachine{
         // assumes initialization happened successfully 
 
         if (checkLanded(current_state_, landing_spot_visual_)){
+            publishCommandComplete();
             return exploration_status_t::STATE_HOVER;
         }
 
@@ -272,8 +279,6 @@ class StateMachine{
 
     int8_t executeRRT_to_not_van(){
 
-        nextTargetPoint << 4.0, 7.75, 0.5;
-
         geometry_msgs::PointStamped goalPoint;
 
         goalPoint.point.x = nextTargetPoint[0];
@@ -292,10 +297,26 @@ class StateMachine{
     int8_t execute_follow_rrt(){
 
         if (distancePoints(nextTargetPoint, current_state_) < 0.5){
+            publishCommandComplete();
             return exploration_status_t::STATE_HOVER;
         }
         
         return exploration_status_t::STATE_FOLLOW_RRT;
+
+    }
+
+    void publishCommandComplete(){
+        // publishes a message saying that the biz command was completed
+        std_msgs::Bool msg;
+        msg.data = true;
+        commandCompletePub.publish(msg);
+    }
+
+    void newBizTargetCallback(geometry_msgs::Point const & msg){
+
+        nextTargetPoint << msg.x, msg.y, msg.z;
+
+        changeStateTo(exploration_status_t::STATE_PLAN_RRT);
 
     }
 
@@ -313,12 +334,15 @@ class StateMachine{
                 "/aruco_single/pose", 2, &StateMachine::cartPoseVisualCallback, this);
             
 
-            stateChangePub = nh.subscribe("/changeState", 1, &StateMachine::receiveState, this);
+            stateChangeSub = nh.subscribe("/changeState", 1, &StateMachine::receiveState, this);
 
+            bizTargetPointSub = nh.subscribe("/bizTargetPoint", 1, &StateMachine::newBizTargetCallback, this);
 
             desPosePub = nh.advertise<geometry_msgs::Pose>("/desired_waypoint",1);
             
             goalPub = nh.advertise<geometry_msgs::PointStamped>("/goal_position", 1);
+
+            commandCompletePub = nh.advertise<std_msgs::Bool>("/bizCommandComplete", 1);
 
             
 
