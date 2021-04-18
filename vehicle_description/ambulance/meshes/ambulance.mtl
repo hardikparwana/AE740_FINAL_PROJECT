@@ -12,8 +12,8 @@ newmtl Ambulance
 	Kd 0.5882 0.5882 0.5882
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka /media/hardik/Windows/Ubuntu/catkin_740/src/AE740_FINAL_PROJECT/vehicle_description/ambulance/materials/textures/ambulance.png
-	map_Kd /media/hardik/Windows/Ubuntu/catkin_740/src/AE740_FINAL_PROJECT/vehicle_description/ambulance/materials/textures/ambulance.png
+	map_Ka ../materials/textures/ambulance.png
+	map_Kd ../materials/textures/ambulance.png
 
 newmtl Firetruck_Wheels
 	Ns 10.0000
