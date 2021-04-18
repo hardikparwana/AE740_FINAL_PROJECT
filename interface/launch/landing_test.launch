@@ -72,7 +72,7 @@
         <!-- initial position of robot in environment -->
     <arg name="x" default="2"/>
     <arg name="y" default="2"/>
-    <arg name="z" default="2.0"/>
+    <arg name="z" default="0.4"/>
 
      <!-- use spawn service of robot to get robot in simulator -->
     <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
