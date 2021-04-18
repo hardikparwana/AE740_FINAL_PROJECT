@@ -25,6 +25,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+find_package(Eigen3)
+
 # add_executable(move_cart src/move_cart.cpp)
 # target_link_libraries(move_cart ${catkin_LIBRARIES})
 

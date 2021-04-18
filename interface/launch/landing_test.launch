@@ -48,12 +48,7 @@
   </group>
 
 <!-- Teleop is NOT launched here - launch it in a separate terminal -->
-  <!-- <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" /> -->
-
-  <!-- <node name="move_van_holonomic" pkg="vehicle_description" type="move_van_holonomic" output="screen" /> -->
-  
-  
- <!--   <node name="drive_van" pkg="vehicle_description" type="drive_van" output="screen" />  -->
+  <!-- <node name="keyop" pkg="ackermann_drive_teleop" type="keyop.py" output="screen" /> -->
 
 <!-- Launch the trajectory generation node-->
 <node name="trajectory_generation_node" pkg="trajectory_generation" type="trajectory_generation_node" output="screen" />
@@ -77,12 +72,12 @@
         <!-- initial position of robot in environment -->
     <arg name="x" default="2"/>
     <arg name="y" default="2"/>
-    <arg name="z" default="3.0"/>
+    <arg name="z" default="2.0"/>
 
      <!-- use spawn service of robot to get robot in simulator -->
     <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-          args="-urdf -param robot_description -model cart -x $(arg x) -y $(arg y) -z $(arg z)" />
+          args="-urdf -param robot_description -model ambulance -x $(arg x) -y $(arg y) -z $(arg z)" />
 
-           <node name="move_cart_holonomic" pkg="vehicle_description" type="move_cart_holonomic" output="screen" />
+    <node name="move_cart_holonomic" pkg="vehicle_description" type="move_cart_holonomic" output="screen" />
 
 </launch>
