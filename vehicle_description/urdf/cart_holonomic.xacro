@@ -15,7 +15,7 @@
         <box size="2.0 2.0 0.25" />
       </geometry-->
       <geometry>
-            <mesh filename="/media/hardik/Windows/Ubuntu/catkin_740/src/AE740_FINAL_PROJECT/vehicle_description/ambulance/meshes/ambulance.obj" scale="0.0254 0.0254 0.0254"/>
+            <mesh filename="$(find vehicle_description)/ambulance/meshes/ambulance.obj" scale="0.0254 0.0254 0.0254"/>
       </geometry>
    </visual>
    <collision>
