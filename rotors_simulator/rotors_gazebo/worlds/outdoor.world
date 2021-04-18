@@ -1,5 +1,24 @@
 <sdf version='1.6'>
   <world name='outdoor'>
+      <uri>model://sun</uri>
+  <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://marker000</uri>
+      <name>marker000</name>
+      <static>1</static>
+    </include>
+    <include>
+      <uri>model://marker001</uri>
+      <name>marker001</name>
+      <static>1</static>
+    </include>
+    <include>
+      <uri>model://marker002</uri>
+      <name>marker002</name>
+      <static>1</static>
+    </include>
     <gui fullscreen='0'>
       <camera name='user_camera'>
         <pose frame=''>-10.8173 13.5572 13.0469 -0 0.491643 -0.879806</pose>
@@ -3656,6 +3675,20 @@
       <light name='user_directional_light_0'>
         <pose frame=''>34.418 -32.5333 1 0 -0 0</pose>
       </light>
+
+      <model name='marker000'>
+        <scale>1 1 1</scale>
+        <pose>7 10 0 0 0 0</pose>
+      </model>
+      <model name='marker001'>
+        <scale>1 1 1</scale>
+        <pose>29 -14 0 0 0 0</pose>
+      </model>
+      <model name='marker002'>
+        <scale>1 1 1</scale>
+        <pose>43 10.5 0 0 0 0</pose>
+      </model>
+
     </state>
     <light name='user_directional_light_0' type='directional'>
       <pose frame=''>34.418 -32.5333 1 0 -0 0</pose>
