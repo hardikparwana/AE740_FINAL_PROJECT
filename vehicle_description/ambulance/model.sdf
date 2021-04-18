@@ -4,17 +4,49 @@
     <static>false</static>
     <link name="link">
       <inertial>
-      <mass>1000.0</mass>
+      <mass>4000.0</mass>
+	      <inertia>
+	      <ixx>3000</ixx>
+	      <ixy>-6.2341e-07</ixy>
+	      <ixz>-7.4538e-07</ixz>
+	      <iyy>3000</iyy>
+	      <iyz>-0.00014394</iyz>
+	      <izz>5000</izz>
+              </inertia>
       </inertial>
       <collision name="collision">
-        <geometry>
+        <!--geometry>
           <mesh>
             <scale>0.0254 0.0254 0.0254</scale>
             <uri>model://ambulance/meshes/ambulance.obj</uri>
           </mesh>
+        </geometry-->
+	<!--origin xyz="0 0 0" rpy="0 0 1.57" /-->
+	<pose>0 0 1.45 0 0 1.57</pose>
+	<geometry>
+          <box>
+            <size>6 2.5 2.9</size>
+          </box>
         </geometry>
+        <!--  hardik: friction added  -->
+	<surface>
+		<friction>
+		  <ode>
+		    <mu>0.7</mu>
+		    <mu2>0.7</mu2>
+		    <slip1>0.4</slip1>
+            	    <slip1>0.4</slip1>
+		  </ode>
+		</friction>
+      	</surface>
       </collision>
       <visual name="visual">
+	<pose>0 0 0 0 0 0</pose>
+	<!--geometry>
+          <box>
+            <size>6 2.9 2.9</size>
+          </box>
+        </geometry-->
         <geometry>
           <mesh>
             <scale>0.0254 0.0254 0.0254</scale>

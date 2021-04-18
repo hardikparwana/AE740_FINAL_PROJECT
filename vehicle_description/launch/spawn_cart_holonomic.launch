@@ -4,9 +4,9 @@
     <param name="robot_description" command="$(find xacro)/xacro.py '$(find vehicle_description)/urdf/cart_holonomic.xacro'"/>
     
     <!-- initial position of robot in environment -->
-    <arg name="x" default="1"/>
-    <arg name="y" default="2"/>
-    <arg name="z" default="0.1"/>
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="3.0"/>
     
     <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -16,6 +16,7 @@
      <arg name="gui" value="true"/>
      <arg name="recording" value="false"/>
      <arg name="debug" value="false"/>
+     <!-- <arg name="gravity" value="true"/> -->
     </include>
 
     <!-- use spawn service of robot to get robot in simulator -->
@@ -25,3 +26,5 @@
     <node name="move_cart_holonomic" pkg="vehicle_description" type="move_cart_holonomic" output="screen" />
           
 </launch>
+
+

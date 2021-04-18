@@ -28,8 +28,8 @@ include_directories(
 # add_executable(move_cart src/move_cart.cpp)
 # target_link_libraries(move_cart ${catkin_LIBRARIES})
 
-# add_executable(move_cart_holonomic src/move_cart_holonomic.cpp)
-# target_link_libraries(move_cart_holonomic ${catkin_LIBRARIES})
+add_executable(move_cart_holonomic src/move_cart_holonomic.cpp)
+target_link_libraries(move_cart_holonomic ${catkin_LIBRARIES})
 
 # add_executable(move_van_holonomic src/move_van_holonomic.cpp)
 # target_link_libraries(move_van_holonomic ${catkin_LIBRARIES})

@@ -79,6 +79,8 @@ void LeePositionController::CalculateRotorVelocities(Eigen::VectorXd* rotor_velo
   *rotor_velocities = angular_acc_to_rotor_velocities_ * angular_acceleration_thrust;
   *rotor_velocities = rotor_velocities->cwiseMax(Eigen::VectorXd::Zero(rotor_velocities->rows()));
   *rotor_velocities = rotor_velocities->cwiseSqrt();
+
+  // std::cout << "Rotor Velocities " << *rotor_velocities << std::endl;
 }
 
 void LeePositionController::SetOdometry(const EigenOdometry& odometry) {
@@ -89,6 +91,13 @@ void LeePositionController::SetTrajectoryPoint(
     const mav_msgs::EigenTrajectoryPoint& command_trajectory) {
   command_trajectory_ = command_trajectory;
   controller_active_ = true;
+}
+
+void LeePositionController::SetControllerStatus(bool arm){
+  if (arm)
+    controller_active_ = true;
+  else
+    controller_active_ = false;
 }
 
 void LeePositionController::ComputeDesiredAcceleration(Eigen::Vector3d* acceleration) const {

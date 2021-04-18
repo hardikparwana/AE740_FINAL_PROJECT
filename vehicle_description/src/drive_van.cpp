@@ -13,7 +13,7 @@ ros::ServiceClient client;
 
 
 const double dt = 0.001;
-const double van_z = 0.05;
+const double van_z = 0.5;
 const double van_L = 4.5; 
 const double deltaMax = 0.25*M_PI;
 
@@ -23,6 +23,10 @@ double yaw = 0;  // theta in the website
 double delta = 0.0;
 double speed = 0.0; // collected from ackerman msg
 double steer = 0.0; // collected from ackerman msg
+
+double vx = 0.0;
+double vy = 0.0;
+double yaw_dot = 0.0;
 
 
 void steerCallback(ackermann_msgs::AckermannDriveStamped msg){
@@ -36,9 +40,9 @@ void steerCallback(ackermann_msgs::AckermannDriveStamped msg){
 
 void step(){
 
-    double vx = speed * std::cos(yaw);
-    double vy = speed * std::sin(yaw);
-    double yaw_dot= std::abs(speed) * std::tan(delta) / van_L;
+    vx = speed * std::cos(yaw);
+    vy = speed * std::sin(yaw);
+    yaw_dot= std::abs(speed) * std::tan(delta) / van_L;
     // double delta_dot = 3*steer;
 
     // update state
@@ -73,6 +77,9 @@ void genMsg(){
     state.pose.orientation.z = std::sin(0.5*(yaw + 0.5*M_PI));
     state.pose.orientation.w = std::cos(0.5*(yaw + 0.5*M_PI)); 
 
+    state.twist.linear.x = vx;
+    state.twist.linear.y = vy;
+    state.twist.angular.z = yaw_dot;
 
     gazebo_msgs::SetModelState setmodelstate;
 
