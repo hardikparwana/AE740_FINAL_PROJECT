@@ -87,6 +87,11 @@ void genMsg(){
     
     client.call(setmodelstate);
 
+
+
+
+
+
 }
 
 // void setState(geometry_msgs::Pose msg){

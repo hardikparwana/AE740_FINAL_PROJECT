@@ -195,10 +195,14 @@ Set the integer to:
 ```
 
 To stop motors:
+```
 rostopic pub /firefly/arm std_msgs/Bool "data: false" 
+```
 
 To start motors:
+```
 rostopic pub /firefly/arm std_msgs/Bool "data: true"
+```
 
 the motors will start again when either the above true is sent or when any deisred pose is sent 
 
