@@ -94,9 +94,9 @@ class BusinessNode{
 
     void waitForCompletion(){
         
+        ROS_INFO("bizNode: waiting for completion");
         ros::Rate rate(5); 
         while(!commandComplete){
-            ROS_INFO("bizNode: waiting for completion");
             ros::spinOnce();
             rate.sleep();
         }
