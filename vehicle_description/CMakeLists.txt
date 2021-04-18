@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   gazebo_msgs
   roscpp
   tf
+  ackermann_msgs
 )
 
 catkin_package(
@@ -24,11 +25,16 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(move_cart src/move_cart.cpp)
-target_link_libraries(move_cart ${catkin_LIBRARIES})
+find_package(Eigen3)
+
+# add_executable(move_cart src/move_cart.cpp)
+# target_link_libraries(move_cart ${catkin_LIBRARIES})
 
 add_executable(move_cart_holonomic src/move_cart_holonomic.cpp)
 target_link_libraries(move_cart_holonomic ${catkin_LIBRARIES})
 
-add_executable(move_van_holonomic src/move_van_holonomic.cpp)
-target_link_libraries(move_van_holonomic ${catkin_LIBRARIES})
+# add_executable(move_van_holonomic src/move_van_holonomic.cpp)
+# target_link_libraries(move_van_holonomic ${catkin_LIBRARIES})
+
+add_executable(drive_van src/drive_van.cpp)
+target_link_libraries(drive_van ${catkin_LIBRARIES})

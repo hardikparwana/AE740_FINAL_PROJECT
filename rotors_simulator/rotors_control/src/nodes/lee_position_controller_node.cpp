@@ -49,6 +49,8 @@ LeePositionControllerNode::LeePositionControllerNode(
 
   command_timer_ = nh_.createTimer(ros::Duration(0), &LeePositionControllerNode::TimedCommandCallback, this,
                                   true, false);
+
+  arm_sub_ = nh_.subscribe("/firefly/arm", 1, &LeePositionControllerNode::ArmCallback, this);
 }
 
 LeePositionControllerNode::~LeePositionControllerNode() { }
@@ -190,6 +192,18 @@ void LeePositionControllerNode::OdometryCallback(const nav_msgs::OdometryConstPt
   actuator_msg->header.stamp = odometry_msg->header.stamp;
 
   motor_velocity_reference_pub_.publish(actuator_msg);
+}
+
+void LeePositionControllerNode::ArmCallback(const std_msgs::Bool& arm_msg){
+
+  if (arm_msg.data){
+    ROS_INFO("************** ARMING  QUADROTOR *******************");
+  }
+  else {
+    ROS_INFO("************** DISARMING  QUADROTOR *******************");
+  }
+  lee_position_controller_.SetControllerStatus(arm_msg.data);
+  
 }
 
 }

@@ -27,7 +27,6 @@
 #include <geometry_msgs/PoseArray.h>
 
 #include <ompl/base/spaces/SE3StateSpace.h>
-#include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/base/OptimizationObjective.h>
 #include <ompl/base/objectives/PathLengthOptimizationObjective.h>
 // #include <ompl/geometric/planners/rrt/RRTstar.h>
@@ -116,7 +115,7 @@ public:
 		bounds.setLow (1,-20);
 		bounds.setHigh(1,20);
 		bounds.setLow (2,-0.5);
-		bounds.setHigh(2,20);
+		bounds.setHigh(2,10);
 
 		space->as<ob::SE3StateSpace>()->setBounds(bounds);
 

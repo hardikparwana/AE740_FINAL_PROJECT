@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   cmake_modules
+  std_msgs
 )
 
 find_package(Eigen3 REQUIRED)

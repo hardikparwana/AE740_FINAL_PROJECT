@@ -37,6 +37,8 @@
 #include "rotors_control/common.h"
 #include "rotors_control/lee_position_controller.h"
 
+#include <std_msgs/Bool.h>
+
 namespace rotors_control {
 
 class LeePositionControllerNode {
@@ -60,6 +62,14 @@ class LeePositionControllerNode {
   ros::Subscriber cmd_multi_dof_joint_trajectory_sub_;
   ros::Subscriber cmd_pose_sub_;
   ros::Subscriber odometry_sub_;
+
+  /////////////////////////////////////////
+
+  // NEW Hardik
+  ros::Subscriber arm_sub_;
+  void ArmCallback(const std_msgs::Bool& arm_msg);
+
+  //////////////////////////////////////////
 
   ros::Publisher motor_velocity_reference_pub_;
 

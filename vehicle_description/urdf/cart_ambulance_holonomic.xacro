@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+
+<robot name="castor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+  <xacro:include filename="$(find vehicle_description)/urdf/cart_holonomic_files/cart_holonomic_materials.xacro" />
+  <xacro:include filename="$(find vehicle_description)/urdf/cart_ambulance_holonomic.gazebo" />
+  <xacro:include filename="$(find vehicle_description)/urdf/cart_holonomic_files/cart_holonomic_macros.xacro" />
+    
+  <!-- invisible root link, on the ground just below the model origin -->
+  <link name="base_footprint">
+  <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <!--geometry>
+        <box size="2.0 2.0 0.25" />
+      </geometry-->
+      <geometry>
+            <mesh filename="/media/hardik/Windows/Ubuntu/catkin_740/src/AE740_FINAL_PROJECT/vehicle_description/ambulance/meshes/ambulance.obj" scale="0.1 0.1 0.1"/>
+      </geometry>
+   </visual>
+   <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="2.0 2.0 0.25" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="3000"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="1000.0" ixy="0" ixz="0" iyy="1000.0" iyz="0" izz="2000.0"/>
+    </inertial>
+     <surface>
+        <friction>
+          <ode>
+            <mu>0.5</mu>
+            <mu2>0.5</mu2>
+            <slip1>0.3</slip1>
+            <slip2>0.3</slip2>
+          </ode>
+        </friction>
+      </surface>
+  </link>
+
+  <joint name="base_link_joint" type="fixed">
+    <origin xyz="0.0 0 0" rpy="0 0 0" />
+    <parent link="base_footprint"/>
+    <child link="link_chassis" />
+  </joint>
+
+
+
+</robot>
+  
+
+
+
+

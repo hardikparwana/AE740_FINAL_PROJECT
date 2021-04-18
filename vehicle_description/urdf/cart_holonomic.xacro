@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 
-<robot name="castor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="ambulance" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 
   <xacro:include filename="$(find vehicle_description)/urdf/cart_holonomic_files/cart_holonomic_materials.xacro" />
@@ -10,92 +10,35 @@
   <!-- invisible root link, on the ground just below the model origin -->
   <link name="base_footprint">
   <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
+      <origin xyz="0 0 0" rpy="0 0 1.57" />
+      <!--geometry>
         <box size="2.0 2.0 0.25" />
+      </geometry-->
+      <geometry>
+            <mesh filename="$(find vehicle_description)/ambulance/meshes/ambulance.obj" scale="0.0254 0.0254 0.0254"/>
       </geometry>
-    </visual>
+   </visual>
    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
+      <origin xyz="0 0 1.45" rpy="0 0 0" />   <!-- this makes it float way above in air -->
       <geometry>
-        <box size="2.0 2.0 0.25" />
+        <box size="6.0 2.9 2.9" /> <!--box size="2.0 2.0 0.25" /-->
       </geometry>
-    </collision>
-    <inertial>
-      <mass value="50"/>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="2.0"/>
-    </inertial>
-     <surface>
+           <surface>
         <friction>
           <ode>
-            <mu>0.5</mu>
-            <mu2>0.5</mu2>
-            <slip1>0.3</slip1>
-            <slip2>0.3</slip2>
+            <mu>1.0</mu>
+            <mu2>1.0</mu2>
+            <slip1>0</slip1>
+            <slip2>0</slip2>
           </ode>
         </friction>
       </surface>
-  </link>
-
-  <joint name="base_link_joint" type="fixed">
-    <origin xyz="0.0 0 0" rpy="0 0 0" />
-    <parent link="base_footprint"/>
-    <child link="link_chassis" />
-  </joint>
-
-
-  <link name="link_chassis">
-    <!-- pose and inertial -->
-    <pose>0 0 0.1 0 0 0</pose>
-    <!--inertial>
-      <mass value="5"/>
+    </collision>
+    <inertial>
+      <mass value="3000"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertia ixx="0.0395416666667" ixy="0" ixz="0" iyy="0.106208333333" iyz="0" izz="0.106208333333"/>
-    </inertial-->
-    <!-- body -->
-
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <box size="2.0 2.0 0.07"/>
-      </geometry>
-      <material name="blue"/>
-    </visual>
-
-
-    <!-- front wheels only for visual -->
-    <visual name="left_front_wheel">
-      <origin rpy="0 1.5707 1.5707" xyz="1.0 -1.0 0"/>
-      <geometry>
-            <cylinder length="0.04" radius="0.1"/>
-      </geometry>
-      <material name="white"/>
-    </visual>
-    <visual name="right_front_wheel">
-      <origin rpy="0 1.5707 1.5707" xyz="1.0 1.0 0"/>
-      <geometry>
-            <cylinder length="0.04" radius="0.1"/>
-      </geometry>
-      <material name="white"/>
-    </visual>
-
-    <!-- rear wheels only for visual -->
-    <visual name="left_rear_wheel">
-      <origin rpy="0 1.5707 1.5707" xyz="-1.0 -1.0 0"/>
-      <geometry>
-            <cylinder length="0.04" radius="0.1"/>
-      </geometry>
-      <material name="blue"/>
-    </visual>
-    <visual name="right_rear_wheel">
-      <origin rpy="0 1.5707 1.5707" xyz="-1.0 1.0 0"/>
-      <geometry>
-            <cylinder length="0.04" radius="0.1"/>
-      </geometry>
-      <material name="blue"/>
-    </visual>
-
+      <inertia ixx="1000.0" ixy="0" ixz="0" iyy="1000.0" iyz="0" izz="2000.0"/>
+    </inertial>
 
   </link>
 

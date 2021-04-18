@@ -29,7 +29,7 @@ bool checkDistanceToGoal(Eigen::Vector3d robot, Eigen::Vector3d van)
 	float cos_cone_angle = 0.5; //std::cos(60*M_PI/180.0f);
 
 	// max distance
-	float dist_thresold = 5.0f;
+	float dist_thresold = 10.0f;
 	float dist = distancePoints(robot,van);
 
 	if (dist>dist_thresold)

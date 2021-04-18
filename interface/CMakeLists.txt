@@ -33,3 +33,6 @@ target_link_libraries(utilslib ${catkin_LIBRARIES})
 add_executable(master_node nodes/master_node.cpp)# src/utils.cpp)
 target_link_libraries(master_node ${catkin_LIBRARIES} utilslib)
 
+add_executable(biz_node nodes/business_node.cpp)
+target_link_libraries(biz_node ${catkin_LIBRARIES})
+

@@ -12,8 +12,8 @@ newmtl Ambulance
 	Kd 0.5882 0.5882 0.5882
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka ambulance.png
-	map_Kd ambulance.png
+	map_Ka ../materials/textures/ambulance.png
+	map_Kd ../materials/textures/ambulance.png
 
 newmtl Firetruck_Wheels
 	Ns 10.0000

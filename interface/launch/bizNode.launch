@@ -1,0 +1,5 @@
+<launch>
+    <rosparam file="$(find interface)/config/houseCoords.yaml" />
+
+    <node name="biz_node" pkg="interface" type="biz_node" output="screen"/>
+</launch>

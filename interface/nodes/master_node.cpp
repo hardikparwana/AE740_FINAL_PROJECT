@@ -1,8 +1,11 @@
 #include <master_node.h>
 #include <eigen3/Eigen/Dense>
 
+// #include <ros/ros.h>
+#include <std_msgs/Bool.h>
 #include <std_msgs/Int8.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PointStamped.h>
 
 #include <utils.h>
@@ -12,10 +15,14 @@ class StateMachine{
 
 	ros::Subscriber currentStateSub;
 	ros::Subscriber cartPoseSub;
-    ros::Subscriber stateChangePub;
+	ros::Subscriber cartPoseVisualSub;
+    ros::Subscriber stateChangeSub;
+    ros::Subscriber bizTargetPointSub;
+
 
     ros::Publisher desPosePub;
     ros::Publisher goalPub;
+    ros::Publisher commandCompletePub;
 
 
 
@@ -23,6 +30,10 @@ class StateMachine{
     Eigen::Vector3d current_state_;
     // double current_yaw;
     Eigen::Vector3d cart_state_;
+
+    Eigen::Vector3d landing_spot_visual_;
+    ros::Time landing_spot_visualRecTime;
+
 
     Eigen::Vector3d nextTargetPoint;
     Eigen::Vector3d realTargetPoint;
@@ -46,6 +57,11 @@ class StateMachine{
         geometry_msgs::Pose cartPose = modelState.pose[cartIndex];
         cart_state_ << cartPose.position.x , cartPose.position.y , cartPose.position.z;
         cartUpdated_ = true;
+    }
+
+    void cartPoseVisualCallback(geometry_msgs::PoseStamped const & targetPose){
+        landing_spot_visual_ << targetPose.pose.position.x , targetPose.pose.position.y , targetPose.pose.position.z;
+        landing_spot_visualRecTime = targetPose.header.stamp;
     }
 
     void receiveState(std_msgs::Int8 const & newState){
@@ -76,6 +92,9 @@ class StateMachine{
                 changeStateTo(newState);
                 return;
 
+            case exploration_status_t::STATE_HOVER:
+                return;
+            
             case exploration_status_t::STATE_PLAN_RRT_TO_VAN:
     			newState = planRRT_to_van();
                 changeStateTo(newState);
@@ -89,11 +108,8 @@ class StateMachine{
 
             // if near (within a cone of) the goal, then shift to pure control
     		case exploration_status_t::STATE_PROXIMITY_CONTROL:
-    			newState = executeLandingControl();
+    			newState = executeLandingControlVisual();
                 changeStateTo(newState);
-                return;
-
-            case exploration_status_t::STATE_HOVER:
                 return;
             
             case exploration_status_t::STATE_PLAN_RRT:
@@ -126,6 +142,8 @@ class StateMachine{
 
         // once initialized and hovering, we can choose the next landing mode, 
         // and return that as the new state
+        // completed the initialization
+        publishCommandComplete();
         return exploration_status_t::STATE_HOVER;
     }
 
@@ -135,7 +153,7 @@ class StateMachine{
     {
         // ROS_INFO(" *** EXECUTING RRT *** ");
 
-        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 4.0;
+        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
 
         geometry_msgs::PointStamped goalPoint;
 
@@ -147,7 +165,6 @@ class StateMachine{
 
         goalPub.publish(goalPoint);
 
-        //todo fix this change of state
         return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
 
     }
@@ -158,6 +175,11 @@ class StateMachine{
         if (distancePoints(nextTargetPoint, current_state_) < 0.5){
             return choose_next_landing_mode();
         }
+
+        if (checkMarkerIsRecent()){ 
+            return exploration_status_t::STATE_PROXIMITY_CONTROL;
+        }
+        
         return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
 
     }
@@ -180,19 +202,60 @@ class StateMachine{
 
     }
 
+    bool checkMarkerIsRecent(){
+
+        return (ros::Time::now() - landing_spot_visualRecTime).toSec() < 2.0;
+
+    }
+
+    //    @bief: execute final landing onto van's roof
+    //    @note: uses the trajectory generation pkg, and the aruco visual markers
+    int8_t executeLandingControlVisual()
+    {
+            // publish the landing pose to /desiredWaypoint
+            // such that the quad will try to land on the van's roof
+            geometry_msgs::Pose desPose;
+            
+            // Convergence Rate
+            float alpha = 0.5;
+
+            bool markerIsRecent = checkMarkerIsRecent();
+            
+            if (markerIsRecent){
+                desPose.position.x = landing_spot_visual_[0];
+                desPose.position.y = landing_spot_visual_[1];
+                desPose.position.z = (alpha) * landing_spot_visual_[2] + (1.0-alpha) * current_state_[2];
+            }
+            else{
+                // fall back to non-visual landing
+                return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
+            }
+            desPosePub.publish(desPose);
+
+            return choose_next_landing_mode();
+
+    }
+
+
+
     int8_t choose_next_landing_mode()
     {
         // assumes initialization happened successfully 
 
-        if (checkLanded(current_state_, cart_state_)){
+        if (checkLanded(current_state_, landing_spot_visual_)){
+            publishCommandComplete();
             return exploration_status_t::STATE_HOVER;
         }
 
-        // tells if it is within a cone of goal location
-        bool proximity = checkDistanceToGoal(current_state_, cart_state_);
-        if (proximity){
+        if (checkMarkerIsRecent()){ 
             return exploration_status_t::STATE_PROXIMITY_CONTROL;
         }
+
+        // // tells if it is within a cone of goal location
+        // bool proximity = checkDistanceToGoal(current_state_, cart_state_);
+        // if (proximity){
+        //     return exploration_status_t::STATE_PROXIMITY_CONTROL;
+        // }
 
         return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
 
@@ -216,8 +279,6 @@ class StateMachine{
 
     int8_t executeRRT_to_not_van(){
 
-        nextTargetPoint << 4.0, 7.75, 0.5;
-
         geometry_msgs::PointStamped goalPoint;
 
         goalPoint.point.x = nextTargetPoint[0];
@@ -236,10 +297,26 @@ class StateMachine{
     int8_t execute_follow_rrt(){
 
         if (distancePoints(nextTargetPoint, current_state_) < 0.5){
+            publishCommandComplete();
             return exploration_status_t::STATE_HOVER;
         }
         
         return exploration_status_t::STATE_FOLLOW_RRT;
+
+    }
+
+    void publishCommandComplete(){
+        // publishes a message saying that the biz command was completed
+        std_msgs::Bool msg;
+        msg.data = true;
+        commandCompletePub.publish(msg);
+    }
+
+    void newBizTargetCallback(geometry_msgs::Point const & msg){
+
+        nextTargetPoint << msg.x, msg.y, msg.z;
+
+        changeStateTo(exploration_status_t::STATE_PLAN_RRT);
 
     }
 
@@ -251,15 +328,21 @@ class StateMachine{
                 "/firefly/odometry_sensor1/pose", 1, &StateMachine::currentStateCallback, this);
 
             cartPoseSub = nh.subscribe(
-                "/gazebo/model_states", 10, &StateMachine::cartPoseCallback, this);
+                "/gazebo/model_states", 2, &StateMachine::cartPoseCallback, this);
 
-
-            stateChangePub = nh.subscribe("/changeState", 10, &StateMachine::receiveState, this);
-
-
-            desPosePub = nh.advertise<geometry_msgs::Pose>("/desired_waypoint",20);
+            cartPoseVisualSub = nh.subscribe(
+                "/aruco_single/pose", 2, &StateMachine::cartPoseVisualCallback, this);
             
-            goalPub = nh.advertise<geometry_msgs::PointStamped>("/goal_position", 20);
+
+            stateChangeSub = nh.subscribe("/changeState", 1, &StateMachine::receiveState, this);
+
+            bizTargetPointSub = nh.subscribe("/bizTargetPoint", 1, &StateMachine::newBizTargetCallback, this);
+
+            desPosePub = nh.advertise<geometry_msgs::Pose>("/desired_waypoint",1);
+            
+            goalPub = nh.advertise<geometry_msgs::PointStamped>("/goal_position", 1);
+
+            commandCompletePub = nh.advertise<std_msgs::Bool>("/bizCommandComplete", 1);
 
             
 
