@@ -1,1 +1,0 @@
-/usr/bin/c++  -O3 -DNDEBUG  -rdynamic CMakeFiles/test_fcl_simple.dir/test_fcl_simple.cpp.o  -o test_fcl_simple  -L/opt/ros/melodic/lib -Wl,-rpath,/opt/ros/melodic/lib:/home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/dependencies/fcl/build/lib ../lib/libfcl.so.0.5.0 -lboost_filesystem -lboost_system -lboost_date_time -lboost_unit_test_framework -loctomap -loctomath 
