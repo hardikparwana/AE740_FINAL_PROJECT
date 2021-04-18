@@ -1,0 +1,39 @@
+<?xml version='1.0'?>
+<sdf version="1.6">
+<model name="marker001">
+  <pose>0 0 0 0 0 0</pose>
+    <link name="link">
+      <inertial>
+        <mass>1.0</mass>
+        <inertia>
+          <ixx>0.083</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.083</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.083</izz>
+        </inertia>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.8 0.8 0.004</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.8 0.8 0.004</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://marker001/materials/marker001.material</uri>
+            <name>marker001</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
