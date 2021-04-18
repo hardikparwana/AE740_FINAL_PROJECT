@@ -24,8 +24,6 @@ class StateMachine{
     ros::Publisher goalPub;
     ros::Publisher commandCompletePub;
 
-
-
 	//Current State
     Eigen::Vector3d current_state_;
     // double current_yaw;
@@ -99,8 +97,7 @@ class StateMachine{
     			newState = planRRT_to_van();
                 changeStateTo(newState);
                 return;
-
-             
+ 
     		case exploration_status_t::STATE_FOLLOW_RRT_TO_VAN:
     			newState = followRRT_to_van();
                 changeStateTo(newState);

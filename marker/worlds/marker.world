@@ -1,0 +1,42 @@
+<sdf version='1.6'>
+  <world name='default'>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://marker000</uri>
+      <name>marker000</name>
+      <static>1</static>
+    </include>
+    <include>
+      <uri>model://marker001</uri>
+      <name>marker001</name>
+      <static>1</static>
+    </include>
+    <include>
+      <uri>model://marker002</uri>
+      <name>marker002</name>
+      <static>1</static>
+    </include>
+    
+    <state world_name='default'>
+      <model name='marker000'>
+        <scale>2 2 2</scale>
+        <pose>7 10 0 0 0 0</pose>
+      </model>
+      <model name='marker001'>
+        <scale>2 2 2</scale>
+        <pose>28.5 -9 0 0 0 0</pose>
+      </model>
+      <model name='marker002'>
+        <scale>2 2 2</scale>
+        <pose>42 13 0 0 0 0</pose>
+      </model>
+    
+    </state>
+  </world>
+</sdf>
