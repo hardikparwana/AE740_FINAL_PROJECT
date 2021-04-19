@@ -195,7 +195,7 @@ public:
 		pdef->print(std::cout);
 
 	    // attempt to solve the problem within one second of planning time
-		ob::PlannerStatus solved = plan->solve(2);
+		ob::PlannerStatus solved = plan->solve(0.5);
 
 		if (solved)
 		{
@@ -413,7 +413,7 @@ void octomapCallback(const octomap_msgs::Octomap::ConstPtr &msg, planner* planne
 
 void odomCb(const nav_msgs::Odometry::ConstPtr &msg, planner* planner_ptr)
 {
-	planner_ptr->setStart(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z+0.3);
+	planner_ptr->setStart(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z);
 	planner_ptr->init_start();
 }
 

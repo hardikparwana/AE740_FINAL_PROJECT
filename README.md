@@ -15,7 +15,7 @@ Now clone the entire repo into the src folder:
 ~/$ cd catkin_ws/src/
 ~/catkin_ws/src$ git clone <repo url>
 ```
-This should contain a copy of all the dependencies we need, so hopefully we dont need to run extra installation processes. 
+This should contain a copy of all/most of the dependencies we need, so hopefully we dont need to run extra installation processes. 
 
 From the workspace folder, we just need to build the folder:
 ```
@@ -24,12 +24,23 @@ From the workspace folder, we just need to build the folder:
 
 and now hopefully all the dependencies can be built.
 
+In addition, you will need:
 
 ```
 sudo apt-get install ros-melodic-octomap-rviz-plugins
 ```
 
-If you have issues with `nlopt` not building, go into `catkin_ws/build/nlopt` and `sudo chmod+x make_install_nlopt.sh`
+and you might need to follow the installation instructions for OMPL, FCL, and Octomap (no octovis needed). Essentially you need to do the following:
+```
+cd dependencies/<package>
+mkdir build
+cd build
+cmake ..
+make -j8
+sudo make install
+```
+
+If you have issues with `nlopt` not building, go into `catkin_ws/build/nlopt` and `sudo chmod +x make_install_nlopt.sh`
 
 ## Testing rotorS
 
@@ -206,3 +217,18 @@ rostopic pub /firefly/arm std_msgs/Bool "data: true"
 
 the motors will start again when either the above true is sent or when any deisred pose is sent 
 
+
+
+## Testing the full sequence
+```
+roslaunch interface landing_test.launch
+```
+
+
+## Todo:
+1. Fix RRT/min snap collision avoidance
+2. visual landing
+3. add second drone
+4. spawn drone on van rather than somewhere else
+5. generate better octomaps
+6. replan rrt if doesnt end at goal

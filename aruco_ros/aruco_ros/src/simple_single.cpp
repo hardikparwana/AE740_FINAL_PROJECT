@@ -62,7 +62,8 @@ private:
   bool cam_info_received;
   image_transport::Publisher image_pub;
   image_transport::Publisher debug_pub;
-  ros::Publisher pose_pub;
+  ros::Publisher pose_pub_26;
+  ros::Publisher pose_pub_582;
   ros::Publisher transform_pub;
   ros::Publisher position_pub;
   ros::Publisher marker_pub; // rviz visualization marker
@@ -130,7 +131,8 @@ public:
 
     image_pub = it.advertise("result", 1);
     debug_pub = it.advertise("debug", 1);
-    pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pose", 100);
+    pose_pub_26 = nh.advertise<geometry_msgs::PoseStamped>("pose_26", 100);
+    pose_pub_582 = nh.advertise<geometry_msgs::PoseStamped>("pose_582", 100);
     transform_pub = nh.advertise<geometry_msgs::TransformStamped>("transform", 100);
     position_pub = nh.advertise<geometry_msgs::Vector3Stamped>("position", 100);
     marker_pub = nh.advertise<visualization_msgs::Marker>("marker", 10);
@@ -185,7 +187,7 @@ public:
   void image_callback(const sensor_msgs::ImageConstPtr& msg)
   {
     if ((image_pub.getNumSubscribers() == 0) && (debug_pub.getNumSubscribers() == 0)
-        && (pose_pub.getNumSubscribers() == 0) && (transform_pub.getNumSubscribers() == 0)
+        && (pose_pub_26.getNumSubscribers() == 0) && (transform_pub.getNumSubscribers() == 0)
         && (position_pub.getNumSubscribers() == 0) && (marker_pub.getNumSubscribers() == 0)
         && (pixel_pub.getNumSubscribers() == 0))
     {
@@ -215,7 +217,7 @@ public:
         for (std::size_t i = 0; i < markers.size(); ++i)
         {
           // only publishing the selected marker
-          if (markers[i].id == marker_id)
+          if ((markers[i].id == 26) || (markers[i].id == 582))
           {
             tf::Transform transform = aruco_ros::arucoMarker2Tf(markers[i]);
             tf::StampedTransform cameraToReference;
@@ -235,7 +237,11 @@ public:
             tf::poseTFToMsg(transform, poseMsg.pose);
             poseMsg.header.frame_id = reference_frame;
             poseMsg.header.stamp = curr_stamp;
-            pose_pub.publish(poseMsg);
+            if (markers[i].id==26){
+              pose_pub_26.publish(poseMsg);
+            }else{
+              pose_pub_582.publish(poseMsg);
+            }
 
             geometry_msgs::TransformStamped transformMsg;
             tf::transformStampedTFToMsg(stampedTransform, transformMsg);

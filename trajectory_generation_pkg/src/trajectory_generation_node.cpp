@@ -123,6 +123,26 @@ class WaypointFollower{
 
     }
 
+    // void generateTrajectory(geometry_msgs::PoseArray const& poseArray){
+
+    //     // RRT sends us this path
+    //     // now we package it into a shape that firefly/command/trajectory can accept
+
+    //     // convert to MultiDOFJointTrajectory Msg
+    //     trajectory_msgs::MultiDOFJointTrajectory trajectoryMsg;
+
+    //     trajectory_msgs::MultiDOFJointTrajectoryPoint trajPoint;
+
+
+
+
+    //     // publish to /firelfy/command/trajectory
+    //     trajectoryPub.publish(trajectoryMsg);
+
+
+
+    // }
+
     void generateTrajectory(geometry_msgs::PoseArray const & poseArray){
         
         std::cout << "Received poseArray: " << poseArray << std::endl;
@@ -148,7 +168,7 @@ class WaypointFollower{
 
         // Start from the current position and zero orientation
         using namespace mav_trajectory_generation::derivative_order;
-        start_position.makeStartOrEnd(current_state, VELOCITY);
+        start_position.makeStartOrEnd(current_state, POSITION);
         vertices.push_back(start_position); 
 
         for (auto i = 0; i < N; i++){
@@ -161,7 +181,7 @@ class WaypointFollower{
 
             // if terminal state:  
             if (i == N-1){
-                nextVert.makeStartOrEnd(nextPos_eigen, VELOCITY);
+                nextVert.makeStartOrEnd(nextPos_eigen, POSITION);
             }
             else{
                 nextVert.addConstraint(POSITION, nextPos_eigen);

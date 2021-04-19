@@ -14,8 +14,6 @@ namespace exploration_status_t
 		static const int8_t   STATE_PROXIMITY_CONTROL = 4;           // landing on van
 		static const int8_t   STATE_PLAN_RRT = 5;						 // RRT to non-van target
 		static const int8_t   STATE_FOLLOW_RRT = 6;
-		static const int8_t   STATE_LANDED_VAN = 7;
-		static const int8_t   STATE_LANDED_HOUSE = 8;
 
 }
 

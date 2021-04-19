@@ -16,6 +16,7 @@ class StateMachine{
 	ros::Subscriber currentStateSub;
 	ros::Subscriber cartPoseSub;
 	ros::Subscriber cartPoseVisualSub;
+	ros::Subscriber housePoseVisualSub;
     ros::Subscriber stateChangeSub;
     ros::Subscriber bizTargetPointSub;
 
@@ -23,6 +24,8 @@ class StateMachine{
     ros::Publisher desPosePub;
     ros::Publisher goalPub;
     ros::Publisher commandCompletePub;
+    ros::Publisher motorArmPub;
+
 
 	//Current State
     Eigen::Vector3d current_state_;
@@ -31,6 +34,9 @@ class StateMachine{
 
     Eigen::Vector3d landing_spot_visual_;
     ros::Time landing_spot_visualRecTime;
+
+    Eigen::Vector3d houselanding_spot_visual_;
+    ros::Time houselanding_spot_visualRecTime;
 
 
     Eigen::Vector3d nextTargetPoint;
@@ -60,6 +66,11 @@ class StateMachine{
     void cartPoseVisualCallback(geometry_msgs::PoseStamped const & targetPose){
         landing_spot_visual_ << targetPose.pose.position.x , targetPose.pose.position.y , targetPose.pose.position.z;
         landing_spot_visualRecTime = targetPose.header.stamp;
+    }
+
+    void housePoseVisualCallback(geometry_msgs::PoseStamped const & targetPose){
+        houselanding_spot_visual_ << targetPose.pose.position.x , targetPose.pose.position.y , targetPose.pose.position.z;
+        houselanding_spot_visualRecTime = targetPose.header.stamp;
     }
 
     void receiveState(std_msgs::Int8 const & newState){
@@ -115,7 +126,7 @@ class StateMachine{
                 return;
 
             case exploration_status_t::STATE_FOLLOW_RRT:
-                newState = execute_follow_rrt();
+                newState = execute_follow_rrt_to_not_van();
                 changeStateTo(newState);
                 return;
 		}
@@ -150,7 +161,7 @@ class StateMachine{
     {
         // ROS_INFO(" *** EXECUTING RRT *** ");
 
-        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
+        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 8.0;
 
         geometry_msgs::PointStamped goalPoint;
 
@@ -168,14 +179,49 @@ class StateMachine{
 
     int8_t followRRT_to_van(){
 
-        
-        if (distancePoints(nextTargetPoint, current_state_) < 0.5){
-            return choose_next_landing_mode();
-        }
-
+        // if seen marker
         if (checkMarkerIsRecent()){ 
             return exploration_status_t::STATE_PROXIMITY_CONTROL;
         }
+        
+        // if close to previously stated goal
+        if (distancePoints(nextTargetPoint, current_state_) < 0.5){
+            // previous rrt goal, but no van around
+
+            // dirty hack to get interpolated target point
+            nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 8.0;
+
+            Eigen::Vector3d dirToTarget = nextTargetPoint - current_state_;
+
+            if (dirToTarget.norm() > 12.0){
+
+                nextTargetPoint = current_state_ + 6.0 * dirToTarget/dirToTarget.norm();
+            }
+            else{
+
+                nextTargetPoint = 0.5*(nextTargetPoint + current_state_);
+
+            }
+
+            geometry_msgs::Pose desPose;
+            desPose.position.x = nextTargetPoint[0];
+            desPose.position.y = nextTargetPoint[1];
+            desPose.position.z = nextTargetPoint[2];
+
+            desPosePub.publish(desPose);
+
+            return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
+        }
+
+        // realTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
+
+        // // if the van has moved away
+        // if (distancePoints(nextTargetPoint, realTargetPoint) > 2.0){
+        //     //
+
+        //     return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
+        // }
+        
         
         return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
 
@@ -205,6 +251,12 @@ class StateMachine{
 
     }
 
+    bool checkHouseMarkerIsRecent(){
+
+        return (ros::Time::now() - houselanding_spot_visualRecTime).toSec() < 2.0;
+
+    }
+
     //    @bief: execute final landing onto van's roof
     //    @note: uses the trajectory generation pkg, and the aruco visual markers
     int8_t executeLandingControlVisual()
@@ -214,20 +266,25 @@ class StateMachine{
             geometry_msgs::Pose desPose;
             
             // Convergence Rate
-            float alpha = 0.5;
+            // float alpha = 0.5;
 
             bool markerIsRecent = checkMarkerIsRecent();
             
             if (markerIsRecent){
-                desPose.position.x = landing_spot_visual_[0];
-                desPose.position.y = landing_spot_visual_[1];
-                desPose.position.z = (alpha) * landing_spot_visual_[2] + (1.0-alpha) * current_state_[2];
+                double ex = landing_spot_visual_[0] - current_state_[0];
+                double ey = landing_spot_visual_[1] - current_state_[1];
+                double ez = landing_spot_visual_[2] - current_state_[2];
+
+                desPose.position.x = current_state_[0] + 0.8 * ex;
+                desPose.position.y = current_state_[1] + 0.8 * ey;
+                desPose.position.z = current_state_[2] + 0.8 * ez;
+                desPosePub.publish(desPose);
             }
             else{
                 // fall back to non-visual landing
                 return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
             }
-            desPosePub.publish(desPose);
+            
 
             return choose_next_landing_mode();
 
@@ -240,6 +297,7 @@ class StateMachine{
         // assumes initialization happened successfully 
 
         if (checkLanded(current_state_, landing_spot_visual_)){
+            // disarmMotors();
             publishCommandComplete();
             return exploration_status_t::STATE_HOVER;
         }
@@ -291,12 +349,40 @@ class StateMachine{
     }
 
 
-    int8_t execute_follow_rrt(){
+    int8_t execute_follow_rrt_to_not_van(){
 
-        if (distancePoints(nextTargetPoint, current_state_) < 0.5){
-            publishCommandComplete();
-            return exploration_status_t::STATE_HOVER;
+        // if (distancePoints(nextTargetPoint, current_state_) < 1.0){
+        //     disarmMotors();
+        //     ros::Duration(3.0).sleep();
+        //     publishCommandComplete();
+        //     return exploration_status_t::STATE_HOVER;
+        // }
+
+        bool markerIsRecent = checkHouseMarkerIsRecent();
+            
+        if (markerIsRecent){
+
+            if ((houselanding_spot_visual_ - current_state_).norm() < 0.5){
+                // landed
+                // disarmMotors();
+                // ros::Duration(3.0).sleep();
+                publishCommandComplete();
+                return exploration_status_t::STATE_HOVER;
+            }
+
+            // marker seen visual landing
+            double ex = houselanding_spot_visual_[0] - current_state_[0];
+            double ey = houselanding_spot_visual_[1] - current_state_[1];
+            double ez = houselanding_spot_visual_[2] - current_state_[2];
+
+            geometry_msgs::Pose desPose;
+
+            desPose.position.x = current_state_[0] + 0.8 * ex;
+            desPose.position.y = current_state_[1] + 0.8 * ey;
+            desPose.position.z = current_state_[2] + 0.4 * ez;
+            desPosePub.publish(desPose);
         }
+
         
         return exploration_status_t::STATE_FOLLOW_RRT;
 
@@ -317,6 +403,18 @@ class StateMachine{
 
     }
 
+    void disarmMotors(){
+        std_msgs::Bool msg;
+        msg.data = false;
+        motorArmPub.publish(msg);
+    }
+    
+    void armMotors(){
+        std_msgs::Bool msg;
+        msg.data = true;
+        motorArmPub.publish(msg);
+    }
+
 
 	public:
         explicit StateMachine(ros::NodeHandle& nh){
@@ -328,7 +426,10 @@ class StateMachine{
                 "/gazebo/model_states", 2, &StateMachine::cartPoseCallback, this);
 
             cartPoseVisualSub = nh.subscribe(
-                "/aruco_single/pose", 2, &StateMachine::cartPoseVisualCallback, this);
+                "/aruco_single/pose_26", 2, &StateMachine::cartPoseVisualCallback, this);
+
+            housePoseVisualSub = nh.subscribe(
+                "/aruco_single/pose_582", 2, &StateMachine::housePoseVisualCallback, this);
             
 
             stateChangeSub = nh.subscribe("/changeState", 1, &StateMachine::receiveState, this);
@@ -341,6 +442,7 @@ class StateMachine{
 
             commandCompletePub = nh.advertise<std_msgs::Bool>("/bizCommandComplete", 1);
 
+            motorArmPub = nh.advertise<std_msgs::Bool>("/firefly/arm",1);
             
 
         }
