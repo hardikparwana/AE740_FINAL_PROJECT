@@ -16,12 +16,12 @@
             <mesh filename="$(find vehicle_description)/ambulance/meshes/ambulance.obj" scale="0.0254 0.0254 0.0254"/>
       </geometry>
    </visual>
-   <visual>
+   <!-- <visual>
       <origin xyz="-3.0 0 3.0" rpy="0 0 1.57" />
       <geometry>
             <box size="2.5 0.1 0.25" />  
       </geometry>
-   </visual>
+   </visual> -->
             
 
    <collision>
@@ -40,12 +40,12 @@
         </friction>
       </surface>
     </collision>
-    <collision>
+    <!-- <collision>
     <origin xyz="-3.0 0 3.0" rpy="0 0 1.57" />
       <geometry>
             <box size="2.5 0.1 0.25" />  
       </geometry>
-    </collision>
+    </collision> -->
     <inertial>
       <mass value="3000"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>

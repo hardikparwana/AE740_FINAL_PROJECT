@@ -31,6 +31,7 @@ class StateMachine{
     Eigen::Vector3d current_state_;
     // double current_yaw;
     Eigen::Vector3d cart_state_;
+    Eigen::Vector3d cart_state_vel_;
 
     Eigen::Vector3d landing_spot_visual_;
     ros::Time landing_spot_visualRecTime;
@@ -62,6 +63,8 @@ class StateMachine{
         int cartIndex = resolveGazeboIndex(modelState,std::string("ambulance"));
         geometry_msgs::Pose cartPose = modelState.pose[cartIndex];
         cart_state_ << cartPose.position.x , cartPose.position.y , cartPose.position.z;
+        cart_state_vel_ << modelState.twist[cartIndex].linear.x , modelState.twist[cartIndex].linear.y, modelState.twist[cartIndex].linear.z;
+
         cartUpdated_ = true;
     }
 
@@ -163,7 +166,13 @@ class StateMachine{
     {
         // ROS_INFO(" *** EXECUTING RRT *** ");
 
+        
+
         nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
+
+        double T = (nextTargetPoint - current_state_).norm()/3.0;
+
+        nextTargetPoint = nextTargetPoint + cart_state_vel_ * T;
 
         geometry_msgs::PointStamped goalPoint;
         goalPoint.point.x = nextTargetPoint[0];
@@ -199,6 +208,9 @@ class StateMachine{
 
         // dirty hack to get interpolated target point
         nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
+        
+        double T = (nextTargetPoint - current_state_).norm()/3.0;
+        nextTargetPoint = nextTargetPoint + cart_state_vel_ * T;
 
         Eigen::Vector3d dirToTarget = nextTargetPoint - current_state_;
 
@@ -234,7 +246,7 @@ class StateMachine{
             
             if (markerIsRecent){
 
-                if (checkLanded(current_state_, landing_spot_visual_)){
+                if (checkLanded(current_state_, getMarkerLocation())){
                     // disarmMotors();
                     publishCommandComplete();
                     return exploration_status_t::STATE_HOVER;
@@ -244,37 +256,25 @@ class StateMachine{
                 double ey = landing_spot_visual_[1] - current_state_[1];
                 double ez = landing_spot_visual_[2] - current_state_[2];
 
-                desPose.position.x = current_state_[0] + 0.7 * ex;
-                desPose.position.y = current_state_[1] + 0.7 * ey;
-                desPose.position.z = current_state_[2] + 0.4 * ez;
+                Eigen::Vector3d e;
+                e << 0.7*ex , 0.7*ey, 0.7*ez;
+
+                nextTargetPoint = current_state_ + e;
+
+                double T = (nextTargetPoint - current_state_).norm()/1.0;
+
+                nextTargetPoint = nextTargetPoint + cart_state_vel_ * T;
+
+                desPose.position.x = nextTargetPoint[0];
+                desPose.position.y = nextTargetPoint[1];
+                desPose.position.z = nextTargetPoint[2];
+
                 desPosePub.publish(desPose);
+                return exploration_status_t::STATE_PROXIMITY_CONTROL;
                 
             }
+            ROS_INFO("In vis landing, Marker not recent ");
             return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
-    }
-
-    int8_t choose_next_landing_mode()
-    {
-        // assumes initialization happened successfully 
-
-        if (checkLanded(current_state_, landing_spot_visual_)){
-            // disarmMotors();
-            publishCommandComplete();
-            return exploration_status_t::STATE_HOVER;
-        }
-
-        if (checkMarkerIsRecent()){ 
-            return exploration_status_t::STATE_PROXIMITY_CONTROL;
-        }
-
-        // // tells if it is within a cone of goal location
-        // bool proximity = checkDistanceToGoal(current_state_, cart_state_);
-        // if (proximity){
-        //     return exploration_status_t::STATE_PROXIMITY_CONTROL;
-        // }
-
-        return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
-
     }
 
     int8_t planRRT_to_not_van(){
@@ -382,6 +382,14 @@ class StateMachine{
     bool checkHouseMarkerIsRecent(){
         return (ros::Time::now() - houselanding_spot_visualRecTime).toSec() < 2.0;
     }
+
+    Eigen::Vector3d getMarkerLocation(){
+        Eigen::Vector3d offset;
+        offset << 0.0, -0.8, 3.0;
+        ROS_INFO_STREAM("CART: " << cart_state_ << " True Marker " << cart_state_ + offset << " Drone: " << current_state_ << " Vis" << landing_spot_visual_);
+        return cart_state_ + offset;
+    }
+
 
 	public:
         explicit StateMachine(ros::NodeHandle& nh){

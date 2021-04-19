@@ -114,7 +114,7 @@ class BusinessNode{
 
         // stateChangePub = nh.subscribe("/changeState", 1, &StateMachine::receiveState, this);
 
-
+        ros::Publisher motorArmPub = nh.advertise<std_msgs::Bool>("/firefly/arm",1);
         bizCommandCompleteSub = nh.subscribe("/bizCommandComplete",1, &BusinessNode::commandCompleteCallback, this);
 
         // this publishes a desired point to get to
@@ -142,6 +142,13 @@ class BusinessNode{
         }
 
         ROS_INFO("BIZ NODE: COMPLETED ALL DELIVERIES!!");
+    
+        // disarmMotors(){
+        std_msgs::Bool msg;
+        msg.data = false;
+        motorArmPub.publish(msg);
+    
+
 
         return;
 

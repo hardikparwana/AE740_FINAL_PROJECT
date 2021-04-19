@@ -135,6 +135,7 @@ rosservice call /world/get_octomap '{bounding_box_origin: {x: 5, y: 0, z: 1.75},
 reference: 
 https://github.com/ethz-asl/rotors_simulator/wiki/Generate-an-octomap-from-your-world
 
+rosservice call /world/get_octomap '{bounding_box_origin: {x: 30, y: 0, z: 5}, bounding_box_lengths: {x: 70, y: 50, z: 12}, leaf_size: 0.1, filename: /home/devansh/vna2v_project_ws/src/AE740_FINAL_PROJECT/path_planning/assets/road_2.bt}'
 
 to visualize make sure octomap rviz plugins is installed, run:
 ```
