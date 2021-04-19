@@ -198,9 +198,9 @@ class WaypointFollower{
 
         segment_times = mav_trajectory_generation::estimateSegmentTimes(vertices, v_max, a_max);
 
-        // for (int i = 0; i < vertices.size()-1; i++){
-        //     segment_times.push_back(1.0*(i+1));
-        // }
+        for (int i = 0; i < vertices.size()-1; i++){
+            segment_times[i] = 0.35 * segment_times[i];
+        }
 
         // Solve for the trajectory
         mav_trajectory_generation::PolynomialOptimization<10> opt(D);
@@ -218,13 +218,15 @@ class WaypointFollower{
 
         // sample the trajectory:
         mav_msgs::EigenTrajectoryPoint::Vector trajectoryStates;
-        double sampling_interval = 0.1;
+        double sampling_interval = 0.25;
         bool success = mav_trajectory_generation::sampleWholeTrajectory(trajectory, sampling_interval, &trajectoryStates);
 
         // convert to MultiDOFJointTrajectory Msg
         trajectory_msgs::MultiDOFJointTrajectory trajectoryMsg;
         mav_msgs::msgMultiDofJointTrajectoryFromEigen (trajectoryStates, &trajectoryMsg);
 
+
+        // ROS_INFO_STREAM( "PUBLISHING MDOFTrajMsg with joint names:" << trajectoryMsg.joint_names << )
         // publish to /firelfy/command/trajectory
         trajectoryPub.publish(trajectoryMsg);
 

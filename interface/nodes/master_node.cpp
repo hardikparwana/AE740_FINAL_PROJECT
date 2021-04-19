@@ -161,7 +161,7 @@ class StateMachine{
     {
         // ROS_INFO(" *** EXECUTING RRT *** ");
 
-        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 8.0;
+        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
 
         geometry_msgs::PointStamped goalPoint;
 
@@ -185,11 +185,11 @@ class StateMachine{
         }
         
         // if close to previously stated goal
-        if (distancePoints(nextTargetPoint, current_state_) < 0.5){
+        if (distancePoints(nextTargetPoint, current_state_) < 3.0){
             // previous rrt goal, but no van around
 
             // dirty hack to get interpolated target point
-            nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 8.0;
+            nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
 
             Eigen::Vector3d dirToTarget = nextTargetPoint - current_state_;
 
@@ -212,16 +212,6 @@ class StateMachine{
 
             return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
         }
-
-        // realTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
-
-        // // if the van has moved away
-        // if (distancePoints(nextTargetPoint, realTargetPoint) > 2.0){
-        //     //
-
-        //     return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
-        // }
-        
         
         return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
 
@@ -275,14 +265,15 @@ class StateMachine{
                 double ey = landing_spot_visual_[1] - current_state_[1];
                 double ez = landing_spot_visual_[2] - current_state_[2];
 
-                desPose.position.x = current_state_[0] + 0.8 * ex;
-                desPose.position.y = current_state_[1] + 0.8 * ey;
-                desPose.position.z = current_state_[2] + 0.8 * ez;
+                desPose.position.x = current_state_[0] + 0.7 * ex;
+                desPose.position.y = current_state_[1] + 0.7 * ey;
+                desPose.position.z = current_state_[2] + 0.4 * ez;
                 desPosePub.publish(desPose);
+                
             }
             else{
                 // fall back to non-visual landing
-                return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
+                // return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
             }
             
 

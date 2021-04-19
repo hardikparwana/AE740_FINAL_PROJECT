@@ -95,7 +95,7 @@ public:
 	// Constructor
 	planner(void)
 	{
-		Quadcopter = std::shared_ptr<fcl::CollisionGeometry>(new fcl::Box(0.3, 0.3, 0.1));
+		Quadcopter = std::shared_ptr<fcl::CollisionGeometry>(new fcl::Box(0.5, 0.5, 0.3));
 		fcl::OcTree* tree = new fcl::OcTree(std::shared_ptr<const octomap::OcTree>(new octomap::OcTree(0.1)));
 		tree_obj = std::shared_ptr<fcl::CollisionGeometry>(tree);
 		
@@ -204,6 +204,10 @@ public:
 			std::cout << "Found solution:" << std::endl;
 			ob::PathPtr path = pdef->getSolutionPath();
 			og::PathGeometric* pth = pdef->getSolutionPath()->as<og::PathGeometric>();
+
+			// interpolate path
+			pth->interpolate(20);
+			
 			pth->printAsMatrix(std::cout);
 	        // print the path to screen
 	        // path->print(std::cout);
@@ -413,7 +417,7 @@ void octomapCallback(const octomap_msgs::Octomap::ConstPtr &msg, planner* planne
 
 void odomCb(const nav_msgs::Odometry::ConstPtr &msg, planner* planner_ptr)
 {
-	planner_ptr->setStart(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z);
+	planner_ptr->setStart(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z+1.0);
 	planner_ptr->init_start();
 }
 
