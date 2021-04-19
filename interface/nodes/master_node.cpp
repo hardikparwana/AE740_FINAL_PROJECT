@@ -44,6 +44,8 @@ class StateMachine{
 
 
     int8_t state_ = 0;
+
+    bool completedRRTtoVan = false;
     
 
     // bool stateChanged = false;
@@ -121,12 +123,12 @@ class StateMachine{
                 return;
             
             case exploration_status_t::STATE_PLAN_RRT:
-                newState = executeRRT_to_not_van();
+                newState = planRRT_to_not_van();
                 changeStateTo(newState);
                 return;
 
             case exploration_status_t::STATE_FOLLOW_RRT:
-                newState = execute_follow_rrt_to_not_van();
+                newState = followRRT_to_not_van();
                 changeStateTo(newState);
                 return;
 		}
@@ -164,14 +166,14 @@ class StateMachine{
         nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
 
         geometry_msgs::PointStamped goalPoint;
-
         goalPoint.point.x = nextTargetPoint[0];
         goalPoint.point.y = nextTargetPoint[1];
         goalPoint.point.z = nextTargetPoint[2];
-
         goalPoint.header.frame_id = "world";
 
         goalPub.publish(goalPoint);
+
+        completedRRTtoVan = false;
 
         return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
 
@@ -184,73 +186,43 @@ class StateMachine{
             return exploration_status_t::STATE_PROXIMITY_CONTROL;
         }
         
-        // if close to previously stated goal
-        if (distancePoints(nextTargetPoint, current_state_) < 3.0){
-            // previous rrt goal, but no van around
 
-            // dirty hack to get interpolated target point
-            nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
-
-            Eigen::Vector3d dirToTarget = nextTargetPoint - current_state_;
-
-            if (dirToTarget.norm() > 12.0){
-
-                nextTargetPoint = current_state_ + 6.0 * dirToTarget/dirToTarget.norm();
+        if (!completedRRTtoVan){
+            // if close to previously stated goal
+            if (distancePoints(nextTargetPoint, current_state_) < 3.0){
+                completedRRTtoVan = true;   
             }
-            else{
-
-                nextTargetPoint = 0.5*(nextTargetPoint + current_state_);
-
-            }
-
-            geometry_msgs::Pose desPose;
-            desPose.position.x = nextTargetPoint[0];
-            desPose.position.y = nextTargetPoint[1];
-            desPose.position.z = nextTargetPoint[2];
-
-            desPosePub.publish(desPose);
-
             return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
         }
+
+        // if reached rrt, but no van sticker seen
+
+        // dirty hack to get interpolated target point
+        nextTargetPoint << cart_state_[0], cart_state_[1], cart_state_[2] + 5.0;
+
+        Eigen::Vector3d dirToTarget = nextTargetPoint - current_state_;
+
+        if (dirToTarget.norm() > 12.0){
+            nextTargetPoint = current_state_ + 6.0 * dirToTarget/dirToTarget.norm();
+        }
+        else{
+            nextTargetPoint = 0.5*(nextTargetPoint + current_state_);
+        }
+
+        geometry_msgs::Pose desPose;
+        desPose.position.x = nextTargetPoint[0];
+        desPose.position.y = nextTargetPoint[1];
+        desPose.position.z = nextTargetPoint[2];
+
+        desPosePub.publish(desPose);
         
         return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
 
     }
 
-    //    @bief: execute final landing onto van's roof
-    //    @note: uses the trajectory generation pkg
-    int8_t executeLandingControl()
-    {
-            // publish the landing pose to /desiredWaypoint
-            // such that the quad will try to land on the van's roof
-
-            geometry_msgs::Pose desPose;
-            desPose.position.x = cart_state_[0];
-            desPose.position.y = cart_state_[1];
-            desPose.position.z = cart_state_[2] + 2.9;
-
-            desPosePub.publish(desPose);
-
-            return choose_next_landing_mode();
-
-    }
-
-    bool checkMarkerIsRecent(){
-
-        return (ros::Time::now() - landing_spot_visualRecTime).toSec() < 2.0;
-
-    }
-
-    bool checkHouseMarkerIsRecent(){
-
-        return (ros::Time::now() - houselanding_spot_visualRecTime).toSec() < 2.0;
-
-    }
-
-    //    @bief: execute final landing onto van's roof
-    //    @note: uses the trajectory generation pkg, and the aruco visual markers
     int8_t executeLandingControlVisual()
     {
+
             // publish the landing pose to /desiredWaypoint
             // such that the quad will try to land on the van's roof
             geometry_msgs::Pose desPose;
@@ -261,6 +233,13 @@ class StateMachine{
             bool markerIsRecent = checkMarkerIsRecent();
             
             if (markerIsRecent){
+
+                if (checkLanded(current_state_, landing_spot_visual_)){
+                    // disarmMotors();
+                    publishCommandComplete();
+                    return exploration_status_t::STATE_HOVER;
+                }
+
                 double ex = landing_spot_visual_[0] - current_state_[0];
                 double ey = landing_spot_visual_[1] - current_state_[1];
                 double ez = landing_spot_visual_[2] - current_state_[2];
@@ -271,17 +250,8 @@ class StateMachine{
                 desPosePub.publish(desPose);
                 
             }
-            else{
-                // fall back to non-visual landing
-                // return exploration_status_t::STATE_PLAN_RRT_TO_VAN;
-            }
-            
-
-            return choose_next_landing_mode();
-
+            return exploration_status_t::STATE_FOLLOW_RRT_TO_VAN;
     }
-
-
 
     int8_t choose_next_landing_mode()
     {
@@ -307,23 +277,7 @@ class StateMachine{
 
     }
 
-    bool checkInitialHovering(){
-
-        // expected location for hovering
-        Eigen::Vector3d expected_state(0, 0, 4.0);
-
-        // compute distance
-        float dist = (expected_state - current_state_).norm();
-
-        if (dist < 0.25){
-            return true;
-        }
-
-        return false;
-
-    }
-
-    int8_t executeRRT_to_not_van(){
+    int8_t planRRT_to_not_van(){
 
         geometry_msgs::PointStamped goalPoint;
 
@@ -339,8 +293,7 @@ class StateMachine{
 
     }
 
-
-    int8_t execute_follow_rrt_to_not_van(){
+    int8_t followRRT_to_not_van(){
 
         // if (distancePoints(nextTargetPoint, current_state_) < 1.0){
         //     disarmMotors();
@@ -406,6 +359,29 @@ class StateMachine{
         motorArmPub.publish(msg);
     }
 
+    bool checkInitialHovering(){
+
+        // expected location for hovering
+        Eigen::Vector3d expected_state(0, 0, 4.0);
+
+        // compute distance
+        float dist = (expected_state - current_state_).norm();
+
+        if (dist < 0.25){
+            return true;
+        }
+
+        return false;
+
+    }
+
+    bool checkMarkerIsRecent(){
+        return (ros::Time::now() - landing_spot_visualRecTime).toSec() < 2.0;
+    }
+
+    bool checkHouseMarkerIsRecent(){
+        return (ros::Time::now() - houselanding_spot_visualRecTime).toSec() < 2.0;
+    }
 
 	public:
         explicit StateMachine(ros::NodeHandle& nh){

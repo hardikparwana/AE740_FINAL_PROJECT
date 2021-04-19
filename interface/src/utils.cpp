@@ -65,9 +65,11 @@ bool checkLanded(Eigen::Vector3d robot, Eigen::Vector3d van)
 	// 	return false;
 	// }
 	if ((robot-van).norm() < 0.5) {
-		if (std::abs((robot-van)[2]) < 0.2){
-			return true;
-		}
+		// if (std::abs((robot-van)[2]) < 0.2){
+		// 	return true;
+		// }
+		return true;
+
 	}
 	return false;
 }

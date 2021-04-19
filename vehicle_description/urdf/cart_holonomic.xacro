@@ -29,7 +29,7 @@
       <geometry>
         <box size="6.0 2.9 2.9" /> <!--box size="2.0 2.0 0.25" /-->
       </geometry>
-           <surface>
+      <surface>
         <friction>
           <ode>
             <mu>1.0</mu>
