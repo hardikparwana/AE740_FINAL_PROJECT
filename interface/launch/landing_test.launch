@@ -51,22 +51,21 @@
   <!-- <node name="keyop" pkg="ackermann_drive_teleop" type="keyop.py" output="screen" /> -->
 
 <!-- Launch the trajectory generation node-->
-<!-- <node name="trajectory_generation_node" pkg="trajectory_generation" type="trajectory_generation_node" output="screen" /> -->
+<node name="trajectory_generation_node" pkg="trajectory_generation" type="trajectory_generation_node" output="screen" />
 
 
 <!-- < Finally launch the state machine node> -->
-<!-- <group if="$(arg runStateMachine)">
+<group if="$(arg runStateMachine)">
   <node name="state_machine" pkg="interface" type="master_node" output="screen"/>
-</group> -->
+</group>
 
-<!-- <include file="$(find path_planning)/launch/path_planning_launch.launch" /> -->
-<!--  -->
-<!-- <include file="$(find aruco_ros)/launch/single.launch" /> -->
+<include file="$(find path_planning)/launch/path_planning_launch.launch" />
 
-<!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find interface)/rviz/main.rviz" /> -->
+<include file="$(find aruco_ros)/launch/single.launch" />
+
+<node type="rviz" name="rviz" pkg="rviz" args="-d $(find interface)/rviz/main.rviz" />
 
 
-<!--param name="robot_description" command="cat '$(find m2wr_description)/urdf/m2wr.xacro'" / -->
     <param name="robot_description" command="$(find xacro)/xacro.py '$(find vehicle_description)/urdf/cart_holonomic.xacro'"/>
 
         <!-- initial position of robot in environment -->
@@ -78,7 +77,7 @@
     <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
           args="-urdf -param robot_description -model ambulance -x $(arg x) -y $(arg y) -z $(arg z)" />
 
-    <!-- <node name="move_cart_holonomic" pkg="vehicle_description" type="move_cart_holonomic" output="screen" /> -->
+    <node name="move_cart_holonomic" pkg="vehicle_description" type="move_cart_holonomic" output="screen" />
 
-<!-- <include file="$(find interface)/launch/bizNode.launch"/>1 -->
+<include file="$(find interface)/launch/bizNode.launch"/>1
 </launch>

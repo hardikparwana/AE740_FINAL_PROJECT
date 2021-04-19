@@ -150,7 +150,7 @@ roslaunch interface landing_test.launch
 ```
 
 ```
-rosrun ph_planning generate_octomap
+rosrun path_planning generate_octomap
 ```
 this can be visualized in the rviz
 
