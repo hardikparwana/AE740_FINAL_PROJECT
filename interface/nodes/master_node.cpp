@@ -386,7 +386,7 @@ class StateMachine{
     Eigen::Vector3d getMarkerLocation(){
         Eigen::Vector3d offset;
         offset << 0.0, -0.8, 3.0;
-        ROS_INFO_STREAM("CART: " << cart_state_ << " True Marker " << cart_state_ + offset << " Drone: " << current_state_ << " Vis" << landing_spot_visual_);
+        // ROS_INFO_STREAM("CART: " << cart_state_ << " True Marker " << cart_state_ + offset << " Drone: " << current_state_ << " Vis" << landing_spot_visual_);
         return cart_state_ + offset;
     }
 
